@@ -1,0 +1,106 @@
+  .banksCard .card {
+    background: #eaf4fe;
+    border-radius: 16px;
+    padding: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .banksCard .text-area {
+    padding: 10px;
+  }
+
+  .banksCard .text-area h2 {
+    font-size: 1.8em;
+    color: #1e1e1e;
+    margin: 0;
+  }
+
+  .banksCard .icons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .banksCard .icons img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+    padding: 5px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .banksCard .blocks {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .banksCard .blocks-image {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+  }
+
+  @media (max-width: 768px) {
+    .banksCard .card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .banksCard .blocks {
+      margin-top: 30px;
+    }
+  }    
+  .textcenter{
+    text-align: -webkit-center;
+  }
+  .cardcontainer {
+    position: relative;
+    background-image: url("images/bg.png");
+    background-size: cover;
+    padding: 25px;
+    border-radius: 11px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  .cardcontainer header,
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cardcontainer .logo img {
+    width: 48px;
+    margin-right: 10px;
+  }
+  .cardcontainer h5 {
+    color: #fff;
+  }
+  .cardcontainer header .chip {
+    width: 60px;
+  }
+  .cardcontainer h6 {
+    color: #fff;
+    font-size: 10px;
+    font-weight: 400;
+  }
+  .cardcontainer h5.number {
+    margin-top: 4px;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+  .cardcontainer .name {
+    margin-top: 20px;
+  }
+  .cardcontainer .card-details {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
