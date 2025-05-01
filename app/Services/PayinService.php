@@ -16,47 +16,49 @@ class PayinService
 
 
   protected $baseUrl = "";
-  protected $token  = "";
-  protected $operator  = "";
+  protected $rid  = "";
+  protected $mid  = "";
+  protected $password  = "";
 
   // Constructor to initialize API details from the database
   public function __construct()
   {
     // Assuming you're fetching the first record from the 'tbl_apis' table
     // You can modify this logic based on your requirements (e.g., selecting based on 'mode' or other conditions)
-    $apiDetails = Api::where('name', 'apisol-payin')->where('status', 'active')->first(); // Fetch the first active API record
+    $apiDetails = Api::where('name', 'paygic-payin')->where('status', 'active')->first(); // Fetch the first active API record
     if ($apiDetails) {
       $this->baseUrl = $apiDetails->base_url;
-      $this->token = $apiDetails->token;
-      $this->operator = $apiDetails->secret;
+      $this->rid = $apiDetails->username;
+      $this->mid = $apiDetails->key;
+      $this->password = $apiDetails->pwd;
     }
   }
 
 
   // Generate Token -----------------------------
-  // public function generateToken(){
+  public function generateToken(){
 
-  //   $endpoint = '/jwt_encode';
-  //   try {
-  //       // Using Laravel's HTTP client
-  //       $response = Http::asForm()->post($this->baseUrl.$endpoint, [
-  //           'email_id' => $this->email,
-  //           'secret_key' => $this->secret
-  //       ]);
+    $endpoint = '/api/v2/reseller/createResellerAuthToken';
+    try {
+        // Using Laravel's HTTP client
+        $response = Http::post($this->baseUrl.$endpoint, [
+            'rid' => $this->rid,
+            'password' => $this->password
+        ]);
         
-  //       // Decode the JSON response
-  //       $result = $response->json();            
-  //       // Check if the response contains the expected fields
-  //       if (isset($result['encode_token']) && $result['error_code'] === 0) {
-  //           return $result['encode_token'];
-  //       } else {
-  //           return null;
-  //       }
+        // Decode the JSON response
+        $result = $response->json();            
+        // Check if the response contains the expected fields
+        if (isset($result['status']) && $result['status']) {
+            return $result['data']['token'];
+        } else {
+            return null;
+        }
             
-  //   } catch (Exception $e) {
-  //       return null;
-  //   }
-  // }
+    } catch (Exception $e) {
+        return null;
+    }
+  }
 
   // Generate Txn Id -----------------------------
   private function generateTxnId()
@@ -103,14 +105,14 @@ class PayinService
     }
 
 
-    // $apiToken = $this->generateToken();
+    $apiToken = $this->generateToken();
 
-    // if($apiToken == null){
-    //   return [
-    //     'status'=>'failed',
-    //     'message'=> 'Bank Service Down'
-    //   ];
-    // }
+    if($apiToken == null){
+      return [
+        'status'=>'failed',
+        'message'=> 'Bank Service Down'
+      ];
+    }
 
     // Insert Data in Fund Request Table 
     $insertedData = Fund::create([
@@ -130,23 +132,24 @@ class PayinService
     }
 
 
-    $endPoint = '/payin/index.php';
+    $endPoint = '/api/v2/reseller/createPaymentRequest';
 
     $headers = [
       'Content-Type' => 'application/json',
-      'Authorization' => "Bearer $this->token",
-      'Cookie' => 'PHPSESSID=9e92f3419eccf32c362b64b5726579bc',
+      'token' => $apiToken
   ];
 
     $apiLog = PayinAPILog::create([
       
       'url'=>$this->baseUrl.$endPoint,
       'request_body'=>json_encode([
-          'operator' => $this->operator,
-          'unique_id' => $txnId,
+          'rid' => $this->rid,
+          'mid' => $this->mid,
           'amount' => $amount,
-          'mobile' => $mobile,
-          'webhook' => 'https://merchant.startpay.in/api/payin/callback',
+          'merchantReferenceId' => $txnId,
+          'customer_name' => $customerName,
+          'customer_email' => $email,
+          'customer_mobile' => $mobile
       ]),
       'request_header'=> json_encode($headers)
   ]);
@@ -155,18 +158,15 @@ class PayinService
 
         // Using Laravel's HTTP client
         $response = Http::withHeaders($headers)->post($this->baseUrl.$endPoint, [
-          'operator' => $this->operator,
-          'unique_id' => $txnId,
+          'rid' => $this->rid,
+          'mid' => $this->mid,
           'amount' => $amount,
-          'mobile' => $mobile,
-          'webhook' => 'https://merchant.startpay.in/api/payin/callback',
+          'merchantReferenceId' => $txnId,
+          'customer_name' => $customerName,
+          'customer_email' => $email,
+          'customer_mobile' => $mobile
       ]); 
 
-        // Extra Fields in API
-        // 'udv1' => 'Custome Value 1',
-        // 'udv2' => 'Custome Value 2',
-        // 'udv3' => 'Custome Value 3',  
-        
         // Parse the JSON response
         $result = $response->json();
 
@@ -174,12 +174,12 @@ class PayinService
         $apiLog->save();
 
         // Check if the response indicates success
-        if (isset($result['status']) && $result['status'] === 'success') {
-          // $insertedData->api_txn_id = $result['transaction_id'];
+        if (isset($result['status']) && $result['status']) {
+          $insertedData->api_txn_id = $result['data']['paygicReferenceId'];
           // $insertedData->qr_code_id = $result['transaction_id'];
           $insertedData->save();
 
-            return ['status'=>'success','message'=>'QR Generated Successfully', 'refid'=>$userTxnId, 'txn_id'=>$txnId, 'qr_string'=> $result['paymentLink']];
+            return ['status'=>'success','message'=>'QR Generated Successfully', 'refid'=>$userTxnId, 'txn_id'=>$txnId, 'qr_string'=> $result['data']['dynamicQR']];
         } else {
             return [
                 'status' => 'failed',
@@ -224,77 +224,63 @@ class PayinService
       ];
     }
 
-    // $apiToken = $this->generateToken();
+    $apiToken = $this->generateToken();
 
-    // if($apiToken == null){
-    //   return [
-    //     'status'=>'failed',
-    //     'message'=> 'Bank Service Down'
-    //   ];
-    // }
+    if($apiToken == null){
+      return [
+        'status'=>'failed',
+        'message'=> 'Bank Service Down'
+      ];
+    }
 
-    $endPoint = '/qr_collection_status';
+    $endPoint = '/api/v2/reseller/checkPaymentStatus';
+    $headers = [
+      'Content-Type' => 'application/json',
+      'token' => $apiToken
+  ];
 
     try {
         // Using Laravel's HTTP client
-        $response = Http::asForm()->post($this->baseUrl.$endPoint, [
-
-            // 'token' => $apiToken,
-            // 'transaction_id' => $transaction->api ,
+        $response = Http::withHeaders($headers)->post($this->baseUrl.$endPoint, [
+          'rid' => $this->rid,
+          'mid' => $this->mid,
+          'merchantReferenceId' => $transaction->txn_id,
         ]);
 
         // Parse the JSON response
         $result = $response->json();
-
-        // {
-        //   "error_code": 0,
-        //   "message": "Transaction details found.",
-        //   "transaction_details": {
-        //     "transaction_id": 615,
-        //     "qr_code_id": 1561,
-        //     "amount": 15,
-        //     "customer_name": "Demo Account",
-        //     "bank_ref_no": "427344665250",
-        //     "status": "Success"
-        //   }
-        // }
         
         // Check if the response indicates success
-        if (isset($result['error_code']) && $result['error_code'] === 0) {
+        if (isset($result['status']) && $result['status']) {
 
-          $txn_details = $result['transaction_details'];
+          $txn_details = $result['data'];
 
-          if($txn_details['status'] == 'success'){
+          if($result['txnStatus'] == 'SUCCESS'){
 
             $user = User::find($transaction->user_id);
 
             $user->fund = $user->fund + $transaction['amount'];
             $user->save();
 
-            $transaction->ref_no = $txn_details['bank_ref_no'];
-            $transaction->qr_code_id = $txn_details['qr_code_id'];
-            $transaction->api_txn_id = $txn_details['transaction_id'];
+            $transaction->ref_no = $txn_details['UTR'];
+            $transaction->api_txn_id = $txn_details['paygicReferenceId'];
             $transaction->save();
             return ['status'=>'success','message'=>'Fund Added Successfully', 'data'=> [
-              'bank_ref_no'=> $txn_details['bank_ref_no'],
-              'status'=>$txn_details['status'],
+              'bank_ref_no'=> $txn_details['UTR'],
+              'status'=>'success',
               'txn_id'=>$transaction->txn_id
               ]
             ];
           }else{
             return ['status'=>'failed','message'=>'Failed to add Fund', 'data'=> [
-              'status'=>$txn_details['status'],
+              'status'=>'failed',
               'txn_id'=>$transaction->txn_id
               ]];
           }
-
         } else {
             return [
                 'status' => 'failed',
-                'message' => $result['message'] ?? 'Failed to add fund',
-                'data'=> [
-                'txn_id'=>$transaction->txn_id
-                ]
+                'message' => $result['msg'] ?? 'Failed to add fund',
             ];
         }
     } catch (Exception $e) {
@@ -307,18 +293,18 @@ class PayinService
 
   public function payinCallback(Array $array){
 
-    $data = Fund::where('txn_id','=', $array['uniquee'])->first();
+    $data = Fund::where('txn_id','=', $array['data']['merchantReferenceId'])->first();
 
     if(!$data){
       return ['message'=> "From Data Condition"];
     }
     
     $user = User::find($data->user_id);
-    if($array['status']=='success'){
+    if($array['txnStatus']=='SUCCESS'){
 
       $user->fund = $user->fund + $data['amount'];
-      $data->api_txn_id = $array['upi'] ?? '';
-      $data->ref_no = $array['utr'] ?? '';
+      $data->api_txn_id = $array['data']['paygicReferenceNumber'] ?? '';
+      $data->ref_no = $array['data']['bankReferenceNumber'] ?? '';
       $data->status = 'success';
       $data->save();
       $user->save();
@@ -331,12 +317,12 @@ class PayinService
           'refid' => $data->user_txn_id,
           'txn_id' => $data->txn_id,
           'amount' => $data->amount,
-          'bank_ref_no'=>$array['utr'] ?? '',
+          'bank_ref_no'=>$array['data']['bankReferenceNumber'] ?? '',
         ]);
       }      
     }
 
-    if($array['status']=='failed'){
+    if($array['txnStatus']=='FAILED'){
 
       $data->api_txn_id = isset($array['upi']) ? $array['upi'] : null;
       // $data->qr_code_id = isset($array['qr_code_id']) ? $array['qr_code_id'] : null;

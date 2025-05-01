@@ -90,13 +90,11 @@ class PayinController extends Controller
 
     public function checkPayinStatus($id)
     {
-        $payin = Payin::findOrFail($id);
+        // $payin = Payin::findOrFail($id);
 
-        return response()->json([
-            $payin['status'] = "pending",
-            'message' => 'The pay-in request is currently being processed.',
-            $payin['data'] = null
-        ]);
+        $response = $this->payinService->checkStatus($id);
+
+        return response()->json($response);
 
         // $payin = $this->payinService->checkStatus($id);
 

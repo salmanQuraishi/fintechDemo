@@ -137,7 +137,7 @@
                         if (row.status === "pending") {
                             actionButtons += `
                                 <a href="javascript:void(0)"
-                                    data-id="${row.id}"
+                                    data-id="${row.txn_id}"
                                     class="rounded-md bg-success-50 px-4 py-1.5 text-sm font-semibold text-success-400 dark:bg-darkblack-500 check-btn">
                                     Check
                                 </a>`;
@@ -180,16 +180,28 @@
                                 },
                                 success: function (response) {
                                     
+                                   if(response.status=='success'){
                                     $('#payin-table').DataTable().ajax.reload();
-                                    Swal.fire({
-                                        icon: 'success',
-                                        text: response.message,
-                                        toast: true,
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true
-                                    });
+                                        Swal.fire({
+                                            icon: 'success',
+                                            text: response.message,
+                                            toast: true,
+                                            position: 'top-end',
+                                            showConfirmButton: false,
+                                            timer: 3000,
+                                            timerProgressBar: true
+                                        });
+                                   }else{
+                                        Swal.fire({
+                                            icon: 'error',
+                                            text: response.message,
+                                            toast: true,
+                                            position: 'top-end',
+                                            showConfirmButton: false,
+                                            timer: 3000,
+                                            timerProgressBar: true
+                                        });
+                                   }
 
                                 },
                                 error: function (xhr, status, error) {
