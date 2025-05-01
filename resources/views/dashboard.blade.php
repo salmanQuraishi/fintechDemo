@@ -130,40 +130,8 @@
 
       <div class="1xl:flex 1xl:space-x-[48px]">
         <div class="w-full mb-[24px] ">
-          <div class="grid lg:grid-cols-4 grid-cols-3 gap-[10px]">
-            <div class="rounded-lg col-span-32">
-              <div class="cardcontainer">
-                <header>
-                  <span class="logo">
-                    <img src="images/logo.png" alt="" />
-                    <h5>Personal Wallet</h5>
-                  </span>
-                  <img src="images/chip.png" alt="" class="chip" />
-                </header>
-                <h6><b>View Balance</b></h6>
-          
-                <div class="card-details">
-                  <div class="name-number">
-                    <h6>Card Number</h6>
-                    <h5 class="number">8050 5040 2030 3020</h5>
-                    <a href="{{route('fund.view')}}" class="flex items-center name">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="18" x="0" y="0" viewBox="0 0 24 24" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path d="M27 29.75H11A2.75 2.75 0 0 1 8.25 27v-.45a7.75 7.75 0 0 1 0-15.1V5A2.75 2.75 0 0 1 11 2.25h11.17a2.74 2.74 0 0 1 1.95.81l4.82 4.82a2.74 2.74 0 0 1 .81 2V27A2.75 2.75 0 0 1 27 29.75Zm-17.25-3V27A1.25 1.25 0 0 0 11 28.25h16A1.25 1.25 0 0 0 28.25 27V10.75H24A2.75 2.75 0 0 1 21.25 8V3.75H11A1.25 1.25 0 0 0 9.75 5v6.25H10a7.75 7.75 0 0 1 0 15.5Zm.25-14A6.25 6.25 0 1 0 16.25 19 6.25 6.25 0 0 0 10 12.75Zm12.75-8.86V8A1.25 1.25 0 0 0 24 9.25h4.11a1.39 1.39 0 0 0-.23-.31l-4.82-4.82a1.39 1.39 0 0 0-.31-.23ZM25 22.75h-5a.75.75 0 0 1 0-1.5h5a.75.75 0 0 1 0 1.5Zm-16.5-1.5A.74.74 0 0 1 8 21a.75.75 0 0 1 0-1l1.28-1.28V16a.75.75 0 0 1 1.5 0v3a.75.75 0 0 1-.22.53L9 21a.74.74 0 0 1-.5.25Zm16.5-2.5h-4a.75.75 0 0 1 0-1.5h4a.75.75 0 0 1 0 1.5Zm0-4h-5a.75.75 0 0 1 0-1.5h5a.75.75 0 0 1 0 1.5Zm-7-4h-3a.75.75 0 0 1 0-1.5h3a.75.75 0 0 1 0 1.5Z" fill="#ffffff" opacity="1" data-original="#000000" class=""></path></g></svg>
-                      </span>
-                      <span class="text-sm font-medium text-bgray-900 dark:text-white">&nbsp; View Statement</span>
-                    </a>
-                  </div>
-                  <div class="valid-date">
-                    <a href="{{route('fund.view')}}" class="flex items-center name">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" x="0" y="0" viewBox="0 0 24 24" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path fill="#ffffff" d="M17 6V4H6v2h3.5c1.302 0 2.401.838 2.815 2H6v2h6.315A2.994 2.994 0 0 1 9.5 12H6v2.414L11.586 20h2.828l-6-6H9.5a5.006 5.006 0 0 0 4.898-4H17V8h-2.602a4.934 4.934 0 0 0-.924-2z" opacity="1" data-original="#000000" class=""></path></g></svg>
-                      </span>
-                      <span class="text-sm font-medium text-bgray-900 dark:text-white">Add Money</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- <div class="grid lg:grid-cols-4 grid-cols-3 gap-[10px]"> -->
+
             <div class="rounded-lg bg-white dark:bg-darkblack-600 col-span-32">
               <div class="banksCard toggle-Banks">
                 <div class="card bg-white dark:bg-darkblack-600">
@@ -186,7 +154,8 @@
                 </div>
               </div>
             </div>
-          </div>
+
+          <!-- </div> -->
         </div>
       </div>
               

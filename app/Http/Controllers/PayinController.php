@@ -138,11 +138,7 @@ class PayinController extends Controller
 
     public function callback(Request $request){
 
-        if(!isset($request->qr_payment)){
-            return;
-        }
-
-        $data = json_decode(urldecode($request->qr_payment),true);
+        $data = $request->all();
 
         $log =  PayinAPILog::create([
             'url'=>'callback',

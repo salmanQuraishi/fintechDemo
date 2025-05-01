@@ -14,52 +14,49 @@ use PhpParser\Node\Expr\Array_;
 class PayinService
 {
 
-  protected $username = "";
-  protected $password = "";
+
   protected $baseUrl = "";
-  protected $email  = "";
-  protected $secret  = "";
+  protected $token  = "";
+  protected $operator  = "";
 
   // Constructor to initialize API details from the database
   public function __construct()
   {
     // Assuming you're fetching the first record from the 'tbl_apis' table
     // You can modify this logic based on your requirements (e.g., selecting based on 'mode' or other conditions)
-    $apiDetails = Api::where('name', 'apiscript-payin')->where('status', 'active')->first(); // Fetch the first active API record
+    $apiDetails = Api::where('name', 'apisol-payin')->where('status', 'active')->first(); // Fetch the first active API record
     if ($apiDetails) {
-      $this->username = $apiDetails->username;
-      $this->password = $apiDetails->pwd;
       $this->baseUrl = $apiDetails->base_url;
-      $this->email = $apiDetails->key;
-      $this->secret = $apiDetails->secret;
+      $this->token = $apiDetails->token;
+      $this->operator = $apiDetails->secret;
     }
   }
 
 
   // Generate Token -----------------------------
-  public function generateToken(){
+  // public function generateToken(){
 
-    $endpoint = '/jwt_encode';
-    try {
-        // Using Laravel's HTTP client
-        $response = Http::asForm()->post($this->baseUrl.$endpoint, [
-            'email_id' => $this->email,
-            'secret_key' => $this->secret
-        ]);
+  //   $endpoint = '/jwt_encode';
+  //   try {
+  //       // Using Laravel's HTTP client
+  //       $response = Http::asForm()->post($this->baseUrl.$endpoint, [
+  //           'email_id' => $this->email,
+  //           'secret_key' => $this->secret
+  //       ]);
         
-        // Decode the JSON response
-        $result = $response->json();            
-        // Check if the response contains the expected fields
-        if (isset($result['encode_token']) && $result['error_code'] === 0) {
-            return $result['encode_token'];
-        } else {
-            return null;
-        }
+  //       // Decode the JSON response
+  //       $result = $response->json();            
+  //       // Check if the response contains the expected fields
+  //       if (isset($result['encode_token']) && $result['error_code'] === 0) {
+  //           return $result['encode_token'];
+  //       } else {
+  //           return null;
+  //       }
             
-    } catch (Exception $e) {
-        return null;
-    }
-  }
+  //   } catch (Exception $e) {
+  //       return null;
+  //   }
+  // }
 
   // Generate Txn Id -----------------------------
   private function generateTxnId()
@@ -106,14 +103,14 @@ class PayinService
     }
 
 
-    $apiToken = $this->generateToken();
+    // $apiToken = $this->generateToken();
 
-    if($apiToken == null){
-      return [
-        'status'=>'failed',
-        'message'=> 'Bank Service Down'
-      ];
-    }
+    // if($apiToken == null){
+    //   return [
+    //     'status'=>'failed',
+    //     'message'=> 'Bank Service Down'
+    //   ];
+    // }
 
     // Insert Data in Fund Request Table 
     $insertedData = Fund::create([
@@ -133,41 +130,37 @@ class PayinService
     }
 
 
-    $endPoint = '/generate_qr';
+    $endPoint = '/payin/index.php';
+
+    $headers = [
+      'Content-Type' => 'application/json',
+      'Authorization' => "Bearer $this->token",
+      'Cookie' => 'PHPSESSID=9e92f3419eccf32c362b64b5726579bc',
+  ];
 
     $apiLog = PayinAPILog::create([
       
       'url'=>$this->baseUrl.$endPoint,
       'request_body'=>json_encode([
-          'user_txn_id' => $userTxnId,
-          'type'=> $userTxnId != null ? 'api' : 'portal',
-          'username' => $this->username,
-          'pwd' => $this->password,
-          'token' => $apiToken,
-          'email_id' => $email,
-          'customer_name' => $customerName,
-          'mobile_no' => $mobile,
+          'operator' => $this->operator,
+          'unique_id' => $txnId,
           'amount' => $amount,
-          'client_id' => $txnId,
-          'udv1'=> $txnId,
-          'udv2'=> $insertedData->id
+          'mobile' => $mobile,
+          'webhook' => 'https://merchant.startpay.in/api/payin/callback',
       ]),
+      'request_header'=> json_encode($headers)
   ]);
 
     try {
+
         // Using Laravel's HTTP client
-        $response = Http::asForm()->post($this->baseUrl.$endPoint, [
-            'username' => $this->username,
-            'pwd' => $this->password,
-            'token' => $apiToken,
-            'email_id' => $email,
-            'customer_name' => $customerName,
-            'mobile_no' => $mobile,
-            'amount' => $amount,
-            'client_id' => $txnId ,
-            'udv1'=> $txnId,
-            'udv2'=> $insertedData->id
-        ]); 
+        $response = Http::withHeaders($headers)->post($this->baseUrl.$endPoint, [
+          'operator' => $this->operator,
+          'unique_id' => $txnId,
+          'amount' => $amount,
+          'mobile' => $mobile,
+          'webhook' => 'https://merchant.startpay.in/api/payin/callback',
+      ]); 
 
         // Extra Fields in API
         // 'udv1' => 'Custome Value 1',
@@ -181,12 +174,12 @@ class PayinService
         $apiLog->save();
 
         // Check if the response indicates success
-        if (isset($result['error_code']) && $result['error_code'] === 0) {
-          $insertedData->api_txn_id = $result['transaction_id'];
-          $insertedData->qr_code_id = $result['transaction_id'];
+        if (isset($result['status']) && $result['status'] === 'success') {
+          // $insertedData->api_txn_id = $result['transaction_id'];
+          // $insertedData->qr_code_id = $result['transaction_id'];
           $insertedData->save();
 
-            return ['status'=>'success','message'=>'QR Generated Successfully', 'refid'=>$userTxnId, 'txn_id'=>$txnId, 'qr_string'=> $result['qr_string']];
+            return ['status'=>'success','message'=>'QR Generated Successfully', 'refid'=>$userTxnId, 'txn_id'=>$txnId, 'qr_string'=> $result['paymentLink']];
         } else {
             return [
                 'status' => 'failed',
@@ -231,24 +224,23 @@ class PayinService
       ];
     }
 
-    $apiToken = $this->generateToken();
+    // $apiToken = $this->generateToken();
 
-    if($apiToken == null){
-      return [
-        'status'=>'failed',
-        'message'=> 'Bank Service Down'
-      ];
-    }
+    // if($apiToken == null){
+    //   return [
+    //     'status'=>'failed',
+    //     'message'=> 'Bank Service Down'
+    //   ];
+    // }
 
     $endPoint = '/qr_collection_status';
 
     try {
         // Using Laravel's HTTP client
         $response = Http::asForm()->post($this->baseUrl.$endPoint, [
-            'username' => $this->username,
-            'pwd' => $this->password,
-            'token' => $apiToken,
-            'transaction_id' => $transaction->api ,
+
+            // 'token' => $apiToken,
+            // 'transaction_id' => $transaction->api ,
         ]);
 
         // Parse the JSON response
@@ -315,18 +307,18 @@ class PayinService
 
   public function payinCallback(Array $array){
 
-    $data = Fund::where('txn_id','=', $array['udv1'])->first();
+    $data = Fund::where('txn_id','=', $array['uniquee'])->first();
 
     if(!$data){
       return ['message'=> "From Data Condition"];
     }
     
     $user = User::find($data->user_id);
-    if($array['status']=='Success'){
+    if($array['status']=='success'){
 
       $user->fund = $user->fund + $data['amount'];
-      $data->api_txn_id = $array['transaction_id'];
-      $data->ref_no = $array['bank_ref_no'];
+      $data->api_txn_id = $array['upi'] ?? '';
+      $data->ref_no = $array['utr'] ?? '';
       $data->status = 'success';
       $data->save();
       $user->save();
@@ -339,16 +331,16 @@ class PayinService
           'refid' => $data->user_txn_id,
           'txn_id' => $data->txn_id,
           'amount' => $data->amount,
-          'bank_ref_no'=>$array['bank_ref_no'],
+          'bank_ref_no'=>$array['utr'] ?? '',
         ]);
       }      
     }
 
     if($array['status']=='failed'){
 
-      $data->api_txn_id = isset($array['transaction_id']) ? $array['transaction_id'] : null;
-      $data->qr_code_id = isset($array['qr_code_id']) ? $array['qr_code_id'] : null;
-      $data->ref_no = isset($array['bank_ref_no']) ?$array['bank_ref_no'] : null;
+      $data->api_txn_id = isset($array['upi']) ? $array['upi'] : null;
+      // $data->qr_code_id = isset($array['qr_code_id']) ? $array['qr_code_id'] : null;
+      $data->ref_no = isset($array['utr']) ?$array['utr'] : null;
       $data->status = 'failed';
       $data->save();
 
