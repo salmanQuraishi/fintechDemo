@@ -405,7 +405,7 @@
                   <a href="{{ route('tokens.index') }}" class="text-md inline-block py-1.5 font-medium text-bgray-600 transition-all hover:text-bgray-800 dark:text-bgray-50 hover:dark:text-success-300">Callback & Token</a>
                 </li>
                 <li>
-                  <a href="https://www.postman.com/webtis-8325/indipayment/collection/uc4267o/indipayment-apis?action=share&creator=40204623" target="_blank" class="text-md inline-block py-1.5 font-medium text-bgray-600 transition-all hover:text-bgray-800 dark:text-bgray-50 hover:dark:text-success-300">Api Documents</a>
+                  <a href="https://www.postman.com/startpay-1840456/startpay/collection/dg4qxyz/startpay?action=share&creator=44591676" target="_blank" class="text-md inline-block py-1.5 font-medium text-bgray-600 transition-all hover:text-bgray-800 dark:text-bgray-50 hover:dark:text-success-300">Api Documents</a>
                 </li>
               </ul>
             </li>
@@ -857,7 +857,7 @@
                   @endcan
                   @can('view payout')
                     <li>
-                      <a href="https://www.postman.com/webtis-8325/indipayment/collection/uc4267o/indipayment-apis?action=share&creator=40204623" target="_blank" class="text-md font-medium text-bgray-600 py-1.5 inline-block hover:text-bgray-80">API Documentation</a>
+                      <a href="https://www.postman.com/startpay-1840456/startpay/collection/dg4qxyz/startpay?action=share&creator=44591676" target="_blank" class="text-md font-medium text-bgray-600 py-1.5 inline-block hover:text-bgray-80">API Documentation</a>
                     </li>
                   @endcan
                 </ul>

@@ -128,38 +128,7 @@
       </div>
     </div>
 
-      <div class="1xl:flex 1xl:space-x-[48px]">
-        <div class="w-full mb-[24px] ">
-          <!-- <div class="grid lg:grid-cols-4 grid-cols-3 gap-[10px]"> -->
-
-            <div class="rounded-lg bg-white dark:bg-darkblack-600 col-span-32">
-              <div class="banksCard toggle-Banks">
-                <div class="card bg-white dark:bg-darkblack-600">
-                  <!-- Text Section -->
-                  <div class="text-area">
-                    <h2 class="lg:text-2xl text-xl dark:text-bgray-50 text-bgray-900 font-bold">Link your Current <br>Account Now!</h2>
-  
-                    <div class="icons">
-                      <img src="https://companieslogo.com/img/orig/YESBANK.NS-a31ff15a.png?t=1720244494" alt="yes">
-                      <img src="https://e7.pngegg.com/pngimages/257/159/png-clipart-hdfc-logo-thumbnail-bank-logos-thumbnail.png" alt="hdfc">
-                      <img src="https://companieslogo.com/img/orig/CANBK.NS-94324ae3.png?t=1720244491" alt="CANBK">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/SBI-logo.svg" alt="sbi">
-                    </div>
-                  </div>
-                
-                  <!-- Image Section -->
-                  <div class="blocks">
-                    <img src="https://static.instantpay.in/assets/dash/i_db_carousel.svg" alt="Services Chart" class="blocks-image">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          <!-- </div> -->
-        </div>
-      </div>
-              
-      <div class="2xl:flex 2xl:space-x-[48px]">
+    <div class="2xl:flex 2xl:space-x-[48px]">
         <section class="2xl:flex-1 2xl:mb-0 mb-6">
           <!-- total widget-->
           <div class="w-full mb-[24px]">
