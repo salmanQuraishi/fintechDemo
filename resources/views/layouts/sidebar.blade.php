@@ -175,7 +175,7 @@
             @endcanany
             @canany(['admin banks']) 
             <li class="item py-[11px] text-bgray-900 dark:text-white">
-              <a href="{{route('fund.view')}}"> 
+              <a href="{{route('bank.adminbankList')}}"> 
                 <div class="flex items-center justify-between">
                   <div class="flex space-x-2.5 items-center">
                     <span class="item-ico">

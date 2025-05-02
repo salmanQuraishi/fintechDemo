@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminBankController;
 use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\BusinessSubCategoryController;
 use App\Http\Controllers\BusinessTypeController;
@@ -192,14 +193,19 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
 
     });  
 
-    Route::prefix('admin')->name('bank.')->group(function(){
+    Route::prefix('admin')->name('bank.')->group(function () {
 
-        Route::get('/',[BusinessKycController::class, 'index'])->name('index');        
-        Route::get('/get-kyc',[BusinessKycController::class, 'getKycs'])->name('get_kyc');
-        Route::get('/{id}',[BusinessKycController::class, 'getKycById'])->name('getKycById');
-        Route::post('/update-status',[BusinessKycController::class, 'businessupdateStatus'])->name('businessupdateStatus');
+        Route::get('/bank/list', [AdminBankController::class, 'index'])
+            ->name('adminbankList');
 
-    });  
+        Route::get('bank/data', [AdminBankController::class, 'getAdminBanks'])->name('getAdminBanks');
+        Route::get('bank/create', [AdminBankController::class, 'create'])->name('getAdminBankcreate');
+        Route::post('bank/create/data', [AdminBankController::class, 'store'])->name('getAdminBankstore');
+        Route::get('bank/edit/{id}', [AdminBankController::class, 'edit'])->name('getAdminBankedit');
+        Route::put('bank/update/{id}', [AdminBankController::class, 'update'])->name('getAdminBankupdate');
+
+    });
+
 
     Route::prefix('kyc')->group(function () {
         
