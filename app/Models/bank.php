@@ -12,6 +12,7 @@ class Bank extends Model
     protected $table = 'banks';
 
     protected $fillable = [
+        'acc_holder_name',
         'bank_name',
         'account_no',
         'ifsc',

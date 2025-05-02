@@ -21,7 +21,7 @@
 
 
                         <div class="">
-                            <ul class="space-y-3 grid 2xl:grid-cols-2 grid-cols-1 gap-6">
+                            <!-- <ul class="space-y-3 grid 2xl:grid-cols-2 grid-cols-1 gap-6">
                                 <li class="flex justify-between items-center">
                                     <div class="flex space-x-3">
                                         <div class="bg-bgray-50 w-10 h-10 rounded-lg flex justify-center items-center">
@@ -101,7 +101,38 @@
                                         </button>
                                     </div>
                                 </li>
+                            </ul> -->
+                            <ul class="grid grid-cols-1 2xl:grid-cols-2 gap-6">
+                                @foreach([
+                                    ['label' => 'Bank Name', 'value' => $adminBank->bank_name, 'id' => 'bankName'],
+                                    ['label' => 'A/C No.', 'value' => $adminBank->account_no, 'id' => 'accountNo'],
+                                    ['label' => 'IFSC', 'value' => $adminBank->ifsc, 'id' => 'ifsc'],
+                                    ['label' => 'A/C Type', 'value' => $adminBank->type, 'id' => 'accountType'],
+                                ] as $item)
+                                <li class="flex justify-between items-center bg-white dark:bg-darkblack-500 border border-bgray-100 dark:border-darkblack-400 p-4 rounded-lg shadow-sm">
+                                    <div class="flex items-start space-x-4">
+                                        <div class="bg-success-50 dark:bg-darkblack-400 w-10 h-10 rounded-lg flex items-center justify-center">
+                                            <!-- Reuse your SVG icon -->
+                                            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M10 1V5C10 5.26522 10.1054 5.51957 10.2929 5.70711C10.4804 5.89464 10.7348 6 11 6H15" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                                <path d="M13 19H3C2.46957 19 1.96086 18.7893 1.58579 18.4142C1.21071 18.0391 1 17.5304 1 17V3C1 2.46957 1.21071 1.96086 1.58579 1.58579C1.96086 1.21071 2.46957 1 3 1H10L15 6V17C15 17.5304 14.7893 18.0391 14.4142 18.4142C14.0391 18.7893 13.5304 19 13 19Z" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-base font-semibold text-bgray-900 dark:text-white">{{ $item['label'] }}</h5>
+                                            <span class="text-sm text-bgray-500 dark:text-bgray-50" id="{{ $item['id'] }}">{{ $item['value'] }}</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="text-bgray-500 hover:text-success-500 transition" onclick="copyToClipboard('{{ $item['id'] }}')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
+                                            <path fill="#1976d2" d="M186.668 416C136.684 416 96 375.316 96 325.332V106.668H58.668C26.305 106.668 0 132.968 0 165.332v288C0 485.695 26.305 512 58.668 512h266.664C357.695 512 384 485.695 384 453.332V416z"/>
+                                            <path fill="#2196f3" d="M469.332 58.668C469.332 26.262 443.07 0 410.668 0h-224C154.262 0 128 26.262 128 58.668v266.664C128 357.738 154.262 384 186.668 384h224c32.402 0 58.664-26.262 58.664-58.668z"/>
+                                        </svg>
+                                    </button>
+                                </li>
+                                @endforeach
                             </ul>
+                            
                         </div>
 
                         <x-input-success :messages="session('status')" />
@@ -295,9 +326,9 @@
                                             <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
                                                 @if ($funds->status === "pending")
                                                     <button class="rounded-md bg-[#FDF9E9] px-4 py-1.5 text-sm font-semibold leading-[22px] text-warning-300 dark:bg-darkblack-500">Pending</button> 
-                                                @elseif ($funds->status === "approved")
+                                                @elseif ($funds->status === "success")
                                                     <button class="rounded-md bg-[#FDF9E9] px-4 py-1.5 text-sm font-semibold leading-[22px] text-success-300 dark:bg-darkblack-500">Approved</button> 
-                                                @elseif ($funds->status === "rejected")
+                                                @elseif ($funds->status === "failed")
                                                     <button class="rounded-md bg-[#FAEFEE] px-4 py-1.5 text-sm font-semibold leading-[22px] text-[#FF4747] dark:bg-darkblack-500">Rejected</button> 
                                                 @endif
                                             </p>
@@ -314,8 +345,8 @@
                                                         @csrf
                                                         @method('PUT')
                                                         <select name="status" class="text-bgray-800 border border-bgray-300 dark:border-darkblack-400 dark:bg-darkblack-500 dark:text-white focus:border-success-300 focus:ring-0 placeholder:text-bgray-500">
-                                                            <option value="approved">Approve</option>
-                                                            <option value="rejected">Reject</option>
+                                                            <option value="success">Approve</option>
+                                                            <option value="failed">Reject</option>
                                                         </select>
                                                         <br>
                                                         <button type="submit" class="bg-[#FDF9E9] px-4 py-1.5 text-xs text-warning-300 dark:bg-darkblack-500">Submit</button> 

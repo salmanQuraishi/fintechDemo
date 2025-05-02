@@ -76,7 +76,7 @@ class FundController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:approved,rejected',
+            'status' => 'required|in:success,failed',
         ]);
 
         $fund = Fund::findOrFail($id);
@@ -86,12 +86,11 @@ class FundController extends Controller
         $fund->status = $request->status;
         $fund->save();
 
-        if($request->status === "approved"){
+        if($request->status === "success"){
             $user = User::where('id','=',$userId)->first();
             $user->fund = $user->fund + $FundAmount;
             $user->save();
         }
-
         return redirect()->back()->with('success', 'Fund status updated successfully!');
     }
 }

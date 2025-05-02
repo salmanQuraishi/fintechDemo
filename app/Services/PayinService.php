@@ -264,6 +264,7 @@ class PayinService
 
             $transaction->ref_no = $txn_details['UTR'];
             $transaction->api_txn_id = $txn_details['paygicReferenceId'];
+            $transaction->status = 'success';
             $transaction->save();
             return ['status'=>'success','message'=>'Fund Added Successfully', 'data'=> [
               'bank_ref_no'=> $txn_details['UTR'],
@@ -277,7 +278,7 @@ class PayinService
               'txn_id'=>$transaction->txn_id
               ]];
           }
-        } else {
+        }else {
             return [
                 'status' => 'failed',
                 'message' => $result['msg'] ?? 'Failed to add fund',

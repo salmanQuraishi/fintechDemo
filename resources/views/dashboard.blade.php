@@ -116,7 +116,7 @@
 
 
     <div class="block rounded-md bg-[#FDF9E9] px-4 text-sm font-semibold leading-[22px] text-warning-300 dark:bg-darkblack-600 mb-2">
-      <div class="flex flex-row py-3">
+      <div class="flex flex-row py-3 gap-3">
         <div class="flex h-[93] w-1 bg-warning-300 rounded-lg"></div>
         <div class="flex-1">
             <p class="text-bgray-800 dark:text-white text-[#9AA2B1] pl-3 lg:text-base text-xs lg:leading-7">
@@ -124,7 +124,7 @@
               Submit a few KYC details to start accepting payments and receive settlement in your account  
             </p>
         </div>
-        <a href="{{route('business.overview')}}" class="bg-success-50 px-4 py-1.5 text-sm font-semibold leading-[22px] text-success-400 dark:bg-darkblack-500">Submit Kyc</a>
+        <a href="{{route('business.overview')}}" class="flex items-center justify-center h-10 bg-success-50 px-4 py-1.5 text-sm font-semibold leading-[22px] text-success-400 dark:bg-darkblack-500">Submit Kyc</a>
       </div>
     </div>
 

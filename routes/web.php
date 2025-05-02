@@ -192,6 +192,15 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
 
     });  
 
+    Route::prefix('admin')->name('bank.')->group(function(){
+
+        Route::get('/',[BusinessKycController::class, 'index'])->name('index');        
+        Route::get('/get-kyc',[BusinessKycController::class, 'getKycs'])->name('get_kyc');
+        Route::get('/{id}',[BusinessKycController::class, 'getKycById'])->name('getKycById');
+        Route::post('/update-status',[BusinessKycController::class, 'businessupdateStatus'])->name('businessupdateStatus');
+
+    });  
+
     Route::prefix('kyc')->group(function () {
         
         Route::get('/business-type', [BusinessTypeController::class, 'index'])->name('kyc.business-type');

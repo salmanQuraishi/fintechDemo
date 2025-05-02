@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Api;
 use App\Models\AadhaarVerify;
 use App\Models\Kyc;
+use App\Models\PayinAPILog;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -132,12 +133,20 @@ class SandboxApiService
             'date_of_birth' => $formattedDate, // Date of birth (DD/MM/YYYY)
         ];
 
+         $logData = PayinAPILog::create([
+            'url'=>$this->baseUrl . $endpoint,
+            'request_body'=>json_encode($data),
+            'request_header'=>json_encode($headers)
+        ]);
+
         // Send POST request
 
         $response = Http::withHeaders($headers)
         ->withoutVerifying() // Ignore SSL verification
         ->post($this->baseUrl . $endpoint, $data);
 
+        $logData->response_body = $response->json();
+        $logData->save();
 
         $errors = [];
 
