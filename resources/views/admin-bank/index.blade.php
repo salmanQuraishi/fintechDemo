@@ -55,10 +55,7 @@
                 {
                     data: 'type',
                     render: data => {
-                        let cls = data === 'current' ? 'bg-[#FDF9E9] text-warning-300' :
-                                  data === 'current' ? 'bg-success-50 text-success-400' :
-                                  'bg-[#FAEFEE] text-[#FF4747]';
-                        return `<span class="rounded-md ${cls} px-4 py-1.5 text-sm font-semibold dark:bg-darkblack-500">${data}</span>`;
+                        return `<span class="rounded-md bg-[#FDF9E9] text-[#FDF9E9] px-4 py-1.5 text-sm font-semibold dark:bg-darkblack-500">${data}</span>`;
                     }
                 },
                 {
@@ -73,11 +70,10 @@
                 {
                     data: 'id',
                     render: function (data, type, row) {
-                        // Generate the route URL directly within the render function
                         const editUrl = "{{ route('bank.getAdminBankedit', ':id') }}".replace(':id', data);
                         
                         return `
-                            <a href="${editUrl}" class="text-blue-600 hover:underline edit-btn" data-id="${data}">Edit</a>
+                            <a href="${editUrl}" class="rounded-md g-success-50 text-success-400 px-4 py-1.5 text-sm font-semibold dark:bg-darkblack-500" data-id="${data}">Edit</a>
                         `;
                     },
                     orderable: false,

@@ -33,7 +33,7 @@ class FundController extends Controller
             $fund = Fund::where('type', 'offline')->get();
         }
 
-        $adminBank = Bank::where('status','=','active')->first();
+        $adminBank = Bank::where('status','=','active')->get();
 
         return view('fund.index', compact('fund','adminBank'));
     }

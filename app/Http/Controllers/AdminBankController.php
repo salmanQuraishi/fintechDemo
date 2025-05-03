@@ -19,7 +19,7 @@ class AdminBankController extends Controller
 
     public function getAdminBanks()
     {
-        $adminBank = Bank::get()->all();
+        $adminBank = Bank::get();
     
         return DataTables::of($adminBank)
             ->addIndexColumn()
