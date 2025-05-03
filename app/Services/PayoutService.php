@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Models\Api;
 use App\Models\AadhaarVerify;
+use App\Models\DefaultCharges;
 use App\Models\IndipaymentApiLog;
 use App\Models\Kyc;
 use App\Models\PayoutModel;
 use App\Models\User;
+use App\Models\UserCharges;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
@@ -50,6 +52,26 @@ class PayoutService
       return ['status'=>false, 'message'=>'Insufficient Balance to complete this transaction.'];
     }
 
+    $charges = UserCharges::with('charge')->where('user_id', $userId)
+    ->where('name', 'payout')
+    ->first() ?? DefaultCharges::where('name', 'payout')->first();
+    
+    $charge = 0;
+    $transferAmount = $amount;
+
+    if($charges){
+      if($charges['type']=='flat'){
+        $charge = $charges['value'];
+        $transferAmount = $amount - $charges['value'];
+      }else{
+        $cha = round(($amount * $charges['value']) / 100, 2);
+        $charge = $cha;
+        $transferAmount = $amount - $cha;
+      }
+    }else{
+      return ['status'=>false, 'message'=>'payout scheem not set'];
+    }
+
     // Create Transaction Id
     $txnId = uniqid('TXN'); // You can also use any of the other methods above
 
@@ -58,7 +80,7 @@ class PayoutService
       "operator" => $this->operator,
       // "bank" => $userBank->bank_name,
       "unique_id" => $txnId,
-      "amount" => $amount,
+      "amount" => $transferAmount,
       "mobile" => $user->mobile, // Replace with actual mobile number
       "type" => 'ac', // Replace with actual mobile number
       "account" => $userBank->account_no, // Replace with actual account number
@@ -72,6 +94,7 @@ class PayoutService
       'user_id' => $userId,
       'txn_id' => $txnId, // Generate or fetch the transaction ID
       'amount' => $amount, // The payout amount
+      'admin_charge' => $charge, // The payout Charge
       'bank_id' => $userBank->id, // Bank account number
       'account_no' => $userBank->account_no, // Bank account number
       'ifsc' => $userBank->ifsc, // Bank IFSC code

@@ -52,12 +52,32 @@ class ApiPayoutService
     // // Create Transaction Id
     $txnId = uniqid('TXN'); // You can also use any of the other methods above
 
+    $charges = UserCharges::with('charge')->where('user_id', $userId)
+    ->where('name', 'payout')
+    ->first() ?? DefaultCharges::where('name', 'payout')->first();
+    
+    $charge = 0;
+    $transferAmount = $amount;
+
+    if($charges){
+      if($charges['type']=='flat'){
+        $charge = $charges['value'];
+        $transferAmount = $amount - $charges['value'];
+      }else{
+        $cha = round(($amount * $charges['value']) / 100, 2);
+        $charge = $cha;
+        $transferAmount = $amount - $cha;
+      }
+    }else{
+      return ['status'=>false, 'message'=>'payout scheem not set'];
+    }
+
     // // Prepare the data (payload) to send in the request
     $reqBody = [
       "operator" => $this->operator,
       // "bank" => $userBank->bank_name,
       "unique_id" => $txnId,
-      "amount" => $amount,
+      "amount" => $transferAmount,
       "mobile" => $mobile, // Replace with actual mobile number
       "type" => 'ac', // Replace with actual mobile number
       "account" => $account, // Replace with actual account number
@@ -72,6 +92,7 @@ class ApiPayoutService
       'txn_id' => $txnId, // Generate or fetch the transaction ID
       'user_txn_id' => $userRefId, // Generate or fetch the transaction ID
       'amount' => $amount, // The payout amount
+      'admin_charge' => $charge, // The payout Charge
       'account_no' => $account, // Bank account number
       'ifsc' => $ifsc, // Bank IFSC code
       'type' => 'api', // Bank IFSC code

@@ -113,7 +113,7 @@
                     </div>
                     <div>
                       <label for="value" class="text-sm text-bgray-500 dark:text-bgray-50 block mb-2.5 text-left">Value</label>
-                      <input type="text" class="w-full border border-bgray-300 rounded-lg py-3 px-4 h-10 focus:border focus:border-success-300 focus:ring-0 dark:bg-darkblack-600 dark:border-darkblack-400 dark:text-white" id="value" name="value" placeholder="Enter your value">
+                      <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="w-full border border-bgray-300 rounded-lg py-3 px-4 h-10 focus:border focus:border-success-300 focus:ring-0 dark:bg-darkblack-600 dark:border-darkblack-400 dark:text-white" id="value" name="value" placeholder="Enter your value">
                     </div>
                     <div class="flex justify-end">
                       <button class="bg-success-300 hover:bg-success-400 text-white text-base font-medium rounded-lg py-3 px-6">
@@ -170,7 +170,11 @@
                     </div>
                     <div>
                       <label for="edit-value" class="text-sm text-bgray-500 dark:text-bgray-50 block mb-2.5 text-left">Value</label>
-                      <input type="text" class="w-full border border-bgray-300 rounded-lg py-3 px-4 h-10 focus:border focus:border-success-300 focus:ring-0 dark:bg-darkblack-600 dark:border-darkblack-400 dark:text-white" id="edit-value" name="value" placeholder="Enter your value">
+                      <input type="text" 
+                      class="w-full border border-bgray-300 rounded-lg py-3 px-4 h-10 focus:border focus:border-success-300 focus:ring-0 dark:bg-darkblack-600 dark:border-darkblack-400 dark:text-white" 
+                      id="edit-value" 
+                      name="value" placeholder="Enter your value"
+                      oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                     </div>
                     <div class="flex justify-end">
                       <button class="bg-success-300 hover:bg-success-400 text-white text-base font-medium rounded-lg py-3 px-6" id="save-changes">

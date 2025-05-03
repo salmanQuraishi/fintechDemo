@@ -54,7 +54,7 @@
                                                        id="value" 
                                                        name="value" 
                                                        value="{{ old('value') ?? ($scheme->value ?? '') }}" 
-                                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                                       oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');">
                                                 <x-input-error :messages="$errors->get('value')" class="mt-2" />
                                             </div>
                                         </div>
