@@ -5,6 +5,7 @@ use App\Http\Controllers\BusinessCategoryController;
 use App\Http\Controllers\BusinessSubCategoryController;
 use App\Http\Controllers\BusinessTypeController;
 use App\Http\Controllers\BuyService;
+use App\Http\Controllers\DefaultChargesController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\ProfileController;
 use App\Models\BusinessCategory;
@@ -204,6 +205,10 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
         Route::get('bank/edit/{id}', [AdminBankController::class, 'edit'])->name('getAdminBankedit');
         Route::put('bank/update/{id}', [AdminBankController::class, 'update'])->name('getAdminBankupdate');
 
+    });
+
+    Route::prefix('/default')->name('default.')->group(function () {
+        Route::get('/charges', [DefaultChargesController::class, 'index'])->name('charges');
     });
 
 
