@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\UserService;
 use App\Models\State;
-use App\Models\city;
+use App\Models\City;
 use App\Models\Nominee;
 use App\Models\Bank;
 use finfo;

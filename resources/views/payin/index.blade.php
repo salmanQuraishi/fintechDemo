@@ -192,9 +192,9 @@
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                 },
                                 success: function (response) {
+                                    $('#payin-table').DataTable().ajax.reload();
                                     
                                    if(response.status=='success'){
-                                    $('#payin-table').DataTable().ajax.reload();
                                         Swal.fire({
                                             icon: 'success',
                                             text: response.message,
@@ -205,7 +205,6 @@
                                             timerProgressBar: true
                                         });
                                    }else if(response.status=='pending'){
-                                    $('#payin-table').DataTable().ajax.reload();
                                     Swal.fire({
                                             icon: 'warning',
                                             text: response.message,
@@ -280,7 +279,7 @@
                                 height: 200,
                             });
 
-                            let timeLeft = 480; // 60 seconds countdown
+                            let timeLeft = 300; // 60 seconds countdown
                             const countdownElement = document.getElementById('countdown');
 
                             const timer = setInterval(() => {
