@@ -222,7 +222,11 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
     });
 
     Route::prefix('/default')->name('default.')->group(function () {
-        Route::get('/charges', [DefaultChargesController::class, 'index'])->name('charges');
+        Route::get('/charges', [DefaultChargesController::class, 'index'])->name('charges');        
+        Route::get('/data', [DefaultChargesController::class, 'getDefaultScheems'])->name('data');;
+        Route::post('/charges', [DefaultChargesController::class, 'store'])->name('store');
+        Route::get('/charges/{id}', [DefaultChargesController::class, 'getDefaultScheemById'])->name('edit');
+        Route::put('/charges/{id}', [DefaultChargesController::class, 'update'])->name('update');
     });
 
 
