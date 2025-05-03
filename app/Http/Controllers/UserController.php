@@ -40,11 +40,11 @@ class UserController extends Controller
             $actions = '';
     
             if (Gate::allows('update user')) {
-                $actions .= '<a href="'.route('users.edit', $user->id).'" class="edit-btn bg-success-50 px-4 py-1.5 text-sm text-success-400 rounded-md mr-1">Edit</a>';
+                $actions .= '<a href="'.route('users.edit', $user->id).'" class="edit-btn bg-success-50 px-4 py-1.5 text-sm text-success-400 rounded-md mr-1">Edit</a> &nbsp;';
             }
-    
-            if (Gate::allows('delete user')) {
-                $actions .= '<a href="'.route('users.delete', $user->id).'" onclick="return confirm(\'Are you sure you want to delete this user?\');" class="delete-btn bg-[#FAEFEE] px-4 py-1.5 text-sm text-[#FF4747] rounded-md">Delete</a>';
+
+            if (Gate::allows('user charges')) {
+                $actions .= ' <a href="'.route('admin.usercharges', encrypt($user->id)).'" class="delete-btn bg-[#FAEFEE] px-4 py-1.5 text-sm text-[#FF4747] rounded-md">Scheem</a>';
             }
     
             return $actions;

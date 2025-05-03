@@ -25,6 +25,7 @@ use App\Http\Controllers\LinkedBankRequestController;
 use App\Http\Controllers\PayinController;
 use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\TokenController;
+use App\Http\Controllers\UserChargesController;
 
 Route::get('/', function () { return view('welcome'); });
 
@@ -69,6 +70,19 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::get('/{userId}/delete', [UserController::class, 'destroy'])->name('delete');
+    });
+
+    Route::prefix('user')->name('admin.')->group(function () {
+
+        Route::get('/schemes/create/{user}', [UserChargesController::class, 'create'])->name('usercharges');
+
+        Route::post('/schemes', [UserChargesController::class, 'store'])->name('schemes.store');
+
+        Route::get('/schemes/{scheme}/edit/{user}', [UserChargesController::class, 'edit'])->name('schemes.edit');
+
+        Route::put('/schemes/{scheme}', [UserChargesController::class, 'update'])->name('schemes.update');
+
+
     });
     
     Route::post('/get/city/list', [ProfileController::class, 'getCity'])->name('getCity');

@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class DefaultCharges extends Model
 {
     use HasFactory;
+
+    protected $table = 'default_charges';
+
+    protected $fillable = [
+        'name',
+        'type',
+        'value',
+    ];
+
 }
