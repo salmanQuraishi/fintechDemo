@@ -45,15 +45,16 @@ class UserChargesController extends Controller
     }
     public function edit($id,$user)
     {
+        $userId = Crypt::decrypt($user);
         $charge = UserCharges::findOrFail($id);
-        $allScheme = UserCharges::where('user_id','=',$user)->with('charge')->get();
+        $allScheme = UserCharges::where('user_id','=',$userId)->with('charge')->get();
         $DefaultCharges = DefaultCharges::all();
 
         return view('scheem.form', [
             'scheme' => $charge,
             'allScheme' => $allScheme,
             'DefaultCharges' => $DefaultCharges,
-            'userId' => Crypt::encrypt($charge->user_id)
+            'userId' => $user
         ]);
     }
 
