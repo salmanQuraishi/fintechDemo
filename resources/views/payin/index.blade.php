@@ -204,6 +204,18 @@
                                             timer: 3000,
                                             timerProgressBar: true
                                         });
+                                   }else if(response.status=='pending'){
+                                    $('#payin-table').DataTable().ajax.reload();
+                                    Swal.fire({
+                                            icon: 'warning',
+                                            text: response.message,
+                                            toast: true,
+                                            position: 'top-end',
+                                            showConfirmButton: false,
+                                            timer: 3000,
+                                            timerProgressBar: true
+                                        });
+
                                    }else{
                                         Swal.fire({
                                             icon: 'error',

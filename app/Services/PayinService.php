@@ -7,6 +7,7 @@ use App\Models\Fund;
 use App\Models\PayinAPILog;
 use App\Models\User;
 use App\Models\UserApiToken;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use PhpParser\Node\Expr\Array_;
@@ -279,10 +280,25 @@ class PayinService
               ]];
           }
         }else {
+
+          $givenTime = Carbon::parse($transaction->created_at);
+          // Get the difference in minutes from now
+          $minutesAgo = $givenTime->diffInMinutes(now());
+
+          if($minutesAgo > 10){
+            
+            $transaction->status = 'failed';
+            $transaction->save();
             return [
-                'status' => 'failed',
-                'message' => $result['msg'] ?? 'Failed to add fund',
+              'status' => 'failed',
+              'message' => 'Transaction Failed'
             ];
+          }else{
+            return [
+              'status' => 'pending',
+              'message' => $result['msg'] ?? 'Failed to add fund'
+            ];
+          }
         }
     } catch (Exception $e) {
         return [
