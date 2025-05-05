@@ -207,7 +207,7 @@
                         <path d="M11 0H7C5.89543 0 5 0.895431 5 2C5 3.10457 5.89543 4 7 4H11C12.1046 4 13 3.10457 13 2C13 0.895431 12.1046 0 11 0Z" fill="#22C55E" class="path-2"></path>
                       </svg>  
                     </span>
-                    <span class="item-text text-lg font-medium leading-none">Default Scheems</span>
+                    <span class="item-text text-lg font-medium leading-none">Default Schemes</span>
                   </div>
                 </div>
               </a>

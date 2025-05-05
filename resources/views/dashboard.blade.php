@@ -141,7 +141,7 @@
                         <img src="{{ asset('/') }}assets/images/icons/total-earn.svg" alt="icon">
                       </span>
                     </div>
-                    <span class="text-lg text-bgray-900 dark:text-white font-semibold">Fund</span>
+                    <span class="text-lg text-bgray-900 dark:text-white font-semibold">Collection Wallet</span>
                   </div>
                   <div>
                     <img src="{{ asset('/') }}assets/images/avatar/members-2.png" alt="members">
@@ -180,7 +180,7 @@
                         <img src="{{ asset('/') }}assets/images/icons/total-earn.svg" alt="icon">
                       </span>
                     </div>
-                    <span class="text-lg text-bgray-900 dark:text-white  font-semibold">Wallet</span>
+                    <span class="text-lg text-bgray-900 dark:text-white  font-semibold">Main Wallet</span>
                   </div>
                   <div>
                     <img src="{{ asset('/') }}assets/images/avatar/members-2.png" alt="members">

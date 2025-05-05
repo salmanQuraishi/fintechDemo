@@ -139,16 +139,27 @@ class FundController extends Controller
         ]);
 
         $fund = Fund::findOrFail($id);
-
         $userId = $fund->user_id;
         $FundAmount = $fund->amount;
+        
+        $superAdmin = User::findOrFail(1);
+
+        if($userId !='1' && $superAdmin->wallet < $FundAmount){
+            return redirect()->back()->with('error', 'Insuficiant Wallet Balance.');
+        }
+
+        
         $fund->status = $request->status;
         $fund->save();
 
         if($request->status === "success"){
             $user = User::where('id','=',$userId)->first();
-            $user->fund = $user->fund + $FundAmount;
+            $user->wallet = $user->wallet + $FundAmount;
             $user->save();
+            if($userId != '1'){
+                $superAdmin->wallet = $user->wallet - $FundAmount;
+                $superAdmin->save();
+            }
         }
         return redirect()->back()->with('success', 'Fund status updated successfully!');
     }

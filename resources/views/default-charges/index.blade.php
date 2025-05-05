@@ -5,7 +5,7 @@
                 <div class="w-full py-[20px] px-[24px] rounded-lg bg-white dark:bg-darkblack-600">
                     <div class="flex flex-col space-y-5">
                         <div class="flex justify-between items-center border-b border-bgray-300 dark:border-darkblack-400 py-3">
-                            <h4 class="text-lg font-bold text-bgray-900 dark:text-white">Default Scheems</h4>
+                            <h4 class="text-lg font-bold text-bgray-900 dark:text-white">Default Schemes</h4>
                             <button type="button" class="modal-open rounded-md bg-[#FDF9E9] px-4 py-1.5 text-sm font-semibold text-warning-300 dark:bg-darkblack-500">Add New Scheem</button>
                         </div>
                         <div class="table-content w-full overflow-x-auto">
