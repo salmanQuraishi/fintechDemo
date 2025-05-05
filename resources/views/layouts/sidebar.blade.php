@@ -490,7 +490,42 @@
               </a>
             </li>
             @endcan
-            @can('view setting')
+            @canany(['view setting','manage payout apis'])
+            <li class="item py-[11px] text-bgray-900 dark:text-white">
+              <a href="javascript:void(0)">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2.5">
+                    <span class="item-ico">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 4C0 1.79086 1.79086 0 4 0H16C18.2091 0 20 1.79086 20 4V16C20 18.2091 18.2091 20 16 20H4C1.79086 20 0 18.2091 0 16V4Z" fill="#1A202C" class="path-1"></path>
+                        <path d="M14 9C12.8954 9 12 9.89543 12 11L12 13C12 14.1046 12.8954 15 14 15C15.1046 15 16 14.1046 16 13V11C16 9.89543 15.1046 9 14 9Z" fill="#22C55E" class="path-2"></path>
+                        <path d="M6 5C4.89543 5 4 5.89543 4 7L4 13C4 14.1046 4.89543 15 6 15C7.10457 15 8 14.1046 8 13L8 7C8 5.89543 7.10457 5 6 5Z" fill="#22C55E" class="path-2"></path>
+                      </svg>
+                    </span>
+                    <span class="item-text text-lg font-medium leading-none">Manage Panel</span>
+                  </div>
+                  <span>
+                    <svg width="6" height="12" viewBox="0 0 6 12" fill="none" class="fill-current" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor" d="M0.531506 0.414376C0.20806 0.673133 0.155619 1.1451 0.414376 1.46855L4.03956 6.00003L0.414376 10.5315C0.155618 10.855 0.208059 11.3269 0.531506 11.5857C0.854952 11.8444 1.32692 11.792 1.58568 11.4685L5.58568 6.46855C5.80481 6.19464 5.80481 5.80542 5.58568 5.53151L1.58568 0.531506C1.32692 0.20806 0.854953 0.155619 0.531506 0.414376Z"></path>
+                    </svg>
+                  </span>
+                </div>
+              </a>
+              <ul class="sub-menu ml-2.5 mt-[22px] border-l border-success-100 pl-5">
+                @can('view setting')
+                <li>
+                  <a href="{{route('setting.view')}}" class="text-md inline-block py-1.5 font-medium text-bgray-600 transition-all hover:text-bgray-800 dark:text-bgray-50 hover:dark:text-success-300">App Setting</a>
+                </li>
+                @endcan
+                @can('manage payout apis')
+                <li>
+                  <a href="{{route('manage.payout.service')}}" class="text-md inline-block py-1.5 font-medium text-bgray-600 transition-all hover:text-bgray-800 dark:text-bgray-50 hover:dark:text-success-300">Manage Payout APIs</a>
+                </li>
+                @endcan
+              </ul>
+            </li>
+            @endcanany
+            <!-- @can('view setting')
             <li class="item py-[11px] text-bgray-900 dark:text-white">
               <a href="{{route('setting.view')}}">
                 <div class="flex items-center justify-between">
@@ -506,7 +541,7 @@
                 </div>
               </a>
             </li>
-            @endcan
+            @endcan -->
 
             @can('view kyc setting')
             <li class="item py-[11px] text-bgray-900 dark:text-white">

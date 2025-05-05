@@ -8,7 +8,6 @@ use App\Models\IndipaymentApiLog;
 use App\Models\PayoutModel;
 use App\Models\User;
 use App\Models\UserCharges;
-use DeflateContext;
 use Illuminate\Support\Facades\Http;
 
 class ApiPayoutService
@@ -55,9 +54,11 @@ class ApiPayoutService
     // // Create Transaction Id
     $txnId = uniqid('TXN'); // You can also use any of the other methods above
 
-    $charges = UserCharges::with('charge')->where('user_id', $userId)
-    ->where('name', 'payout')
-    ->first() ?? DefaultCharges::where('name', 'payout')->first();
+    $charges = UserCharges::where('user_id', $userId)
+              ->whereHas('charge', function ($query) {
+                  $query->where('name', 'payout');
+              })
+              ->first() ?? DefaultCharges::where('name', 'payout')->first();
     
     $charge = 0;
     $transferAmount = $amount;
@@ -164,10 +165,10 @@ class ApiPayoutService
 
 
   // Check Transaction Status
-  public function checkStatus(string $userTxnId){
+  public function checkStatus(string $txnId){
     $endpoint = '/payout/payout_status.php';
 
-    $transaction = PayoutModel::where('txn_id','=',$userTxnId)->first();
+    $transaction = PayoutModel::where('txn_id','=',$txnId)->first();
 
     if(!$transaction){
       return ['status'=>'failed', 'message'=>"Transaction id invailed", 'data'=> null];

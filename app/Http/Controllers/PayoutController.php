@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Api;
+use App\Services\IndipaymentPayoutService;
 use App\Services\PayoutService;
 use App\Services\UserBankService;
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\UserBankModel;
 use App\Models\PayoutModel;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +17,14 @@ class PayoutController extends Controller
 
     protected $payoutService;
     protected $userBankService;
-    public function __construct(PayoutService $payoutService, UserBankService $userBankService){
+    protected $indipaymentPayoutService;
+    protected $api;
+    public function __construct(PayoutService $payoutService, UserBankService $userBankService, IndipaymentPayoutService $indipaymentPayoutService){
         $this->payoutService = $payoutService;
         $this->userBankService = $userBankService;
+        $this->userBankService = $userBankService;
+        $this->indipaymentPayoutService = $indipaymentPayoutService;
+        $this->api = Api::where('type','=','payout')->where('status','=','active')->first();
     }
     public function index()
     {
@@ -80,7 +86,16 @@ class PayoutController extends Controller
             return back()->withErrors(['error'=> "something went wrong! please try again"])->withInput();
         }
 
-        $payout = $this->payoutService->payout($request->amount,$userId,$bank->id,$request->mode);
+        if($this->api->name === 'indipayment'){
+            $payout = $this->indipaymentPayoutService->payout($request->amount,$userId,$bank->id,$request->mode);
+        }else if($this->api->name === 'apisol-payout'){
+
+            $payout = $this->payoutService->payout($request->amount,$userId,$bank->id,$request->mode);
+        }else{
+            
+            return back()->with(['error'=> 'payout api is not active'])->withInput();
+        }
+
 
         if(!$payout['status']){
             return back()->with(['error'=> $payout['message']])->withInput();
@@ -122,7 +137,15 @@ class PayoutController extends Controller
     
     public function checkpayoutStatus($id) {
 
-        $payout = $this->payoutService->checkStatus($id);
+        if($this->api->name === 'indipayment'){
+            $payout = $this->indipaymentPayoutService->checkStatus($id);
+        }else if($this->api->name === 'apisol-payout'){
+
+            $payout = $this->payoutService->checkStatus($id);
+        }else{
+            
+            return back()->with(['error'=> 'payout api is not active'])->withInput();
+        }
 
         if(!$payout['status']){
             return response()->json([

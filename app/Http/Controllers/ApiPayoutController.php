@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Api;
 use App\Models\IndipaymentApiLog;
 use App\Models\PayoutModel;
 use App\Models\UserApiToken;
+use App\Services\ApiIndipaymentPayoutService;
 use App\Services\ApiPayoutService;
 use Exception;
 use Illuminate\Http\Request;
@@ -15,8 +17,12 @@ class ApiPayoutController extends Controller
 {
 
     protected $apiPayoutService;
-    public function __construct(ApiPayoutService $apiPayoutService) {
+    protected $apiIndipaymentPayoutService;
+    protected $api;
+    public function __construct(ApiPayoutService $apiPayoutService, ApiIndipaymentPayoutService $apiIndipaymentPayoutService) {
         $this->apiPayoutService = $apiPayoutService;
+        $this->apiIndipaymentPayoutService = $apiIndipaymentPayoutService;
+        $this->api = Api::where('type','=','payout')->where('status','=','active')->first();
     }
     public function payout(Request $request)
     {
@@ -40,6 +46,7 @@ class ApiPayoutController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
+        
         
         $ip = $request->ip();
         $authHeader = $request->header('Authorization');
@@ -82,7 +89,7 @@ class ApiPayoutController extends Controller
                 'type' => 'api user', // Type of the request (e.g., GET, POST)
                 'txn_id' => $request->refid, // Transaction ID
                 'request_headers' =>$request->headers, // Request headers as JSON string
-                'request_body' => json_encode($request), // Request body as JSON string
+                'request_body' => json_encode($request->all()), // Request body as JSON string
                 'response_body' => null, // Response body as JSON string
               ]);
 
@@ -95,13 +102,26 @@ class ApiPayoutController extends Controller
             $name = $request->name;
             $amount = $request->amount;
             $transferMode = $request->transferMode;
+
+            if($this->api->name === 'indipayment'){
+                $payout = $this->apiIndipaymentPayoutService->payout(
+                    $amount,  $userId, 
+                    $bank, $ifsc, 
+                    $account, $mobile, 
+                    $transferMode, $userRefid, $name
+                );
+            }else if($this->api->name === 'apisol-payout'){
     
-            $payout = $this->apiPayoutService->payout(
-                $amount,  $userId, 
-                $bank, $ifsc, 
-                $account, $mobile, 
-                $transferMode, $userRefid, $name
-            );
+                $payout = $this->apiPayoutService->payout(
+                    $amount,  $userId, 
+                    $bank, $ifsc, 
+                    $account, $mobile, 
+                    $transferMode, $userRefid, $name
+                );
+            }else{
+                return response()->json(['status'=>'failed', 'message'=>'Payout Api is not active']);
+            }
+
              // Update API Log Data
             $logData = IndipaymentApiLog::find($logData->id)->first();
 
@@ -121,6 +141,7 @@ class ApiPayoutController extends Controller
             return response()->json($payout,400);
     
         } catch (Exception $e) {
+            dd($e);
 
             // Update API Log Data
             $logData = IndipaymentApiLog::find($logData->id)->first();
@@ -176,7 +197,14 @@ class ApiPayoutController extends Controller
                 ], 401);
             }
             
-            $response = $this->apiPayoutService->checkStatus($request->refid);
+            if($this->api->name === 'indipayment'){
+                $response = $this->apiIndipaymentPayoutService->checkStatus($request->refid);
+            }else if($this->api->name === 'apisol-payout'){
+    
+                $response = $this->apiPayoutService->checkStatus($request->refid);
+            }else{
+                return response()->json(['status'=>'failed', 'message'=>'Payout Api is not active']);
+            }
 
             if($response['status']==='success'){
                 return response()->json($response);

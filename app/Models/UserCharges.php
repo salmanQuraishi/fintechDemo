@@ -25,6 +25,6 @@ class UserCharges extends Model
 
     public function charge()
     {
-        return $this->belongsTo(DefaultCharges::class);
+        return $this->belongsTo(DefaultCharges::class, 'charge_id', 'id');
     }
 }

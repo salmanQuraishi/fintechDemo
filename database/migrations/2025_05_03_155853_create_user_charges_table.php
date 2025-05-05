@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_charges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
-            $table->string('charge_id')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            $table->foreignId('charge_id')->constrained('default_charges')->nullable();
             $table->enum('type',['flat','percent']);
             $table->string('value')->nullable();
             $table->timestamps();

@@ -48,7 +48,11 @@ class AuthService
         // Cache::put('otp_' . $mobile, $otp, 300); // Cache for 5 minutes
 
         // Simulate sending OTP (can be replaced by an actual API call to send an SMS)
-        $otpRequst = $this->smsService->sendOtp($mobile, $otp);
+        if(env('APP_MODE','production') === 'production'){
+            $otpRequst = $this->smsService->sendOtp($mobile, $otp);
+        }else{
+            $otpRequst = ['status'=>true];
+        }
 
         if($otpRequst['status']){
             $otpData->save();
