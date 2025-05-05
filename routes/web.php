@@ -7,6 +7,7 @@ use App\Http\Controllers\BusinessTypeController;
 use App\Http\Controllers\BuyService;
 use App\Http\Controllers\DefaultChargesController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\ManagePayoutController;
 use App\Http\Controllers\ProfileController;
 use App\Models\BusinessCategory;
 use App\Models\BusinessTypeModel;
@@ -222,7 +223,20 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
     });
 
     Route::prefix('/default')->name('default.')->group(function () {
-        Route::get('/charges', [DefaultChargesController::class, 'index'])->name('charges');
+        Route::get('/charges', [DefaultChargesController::class, 'index'])->name('charges');        
+        Route::get('/data', [DefaultChargesController::class, 'getDefaultScheems'])->name('data');
+        Route::post('/charges', [DefaultChargesController::class, 'store'])->name('store');
+        Route::get('/charges/{id}', [DefaultChargesController::class, 'getDefaultScheemById'])->name('edit');
+        Route::put('/charges/{id}', [DefaultChargesController::class, 'update'])->name('update');
+    });
+    Route::prefix('/manage')->name('manage.')->group(function () {
+        Route::prefix('/payout')->name('payout.')->group(function () {
+            
+            Route::get('/', [ManagePayoutController::class, 'index'])->name('service');        
+            Route::get('/data', [ManagePayoutController::class, 'getPayoutApis'])->name('data');
+            Route::put('/activate/{id}', [ManagePayoutController::class, 'activate'])->name('update');
+        
+        });
     });
 
 
@@ -278,6 +292,36 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
         });
     });
 });
+
+// Clear application cache:
+Route::get('/clear-cache', function() {
+    Artisan::call('cache:clear');
+});
+// Migrate application 
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+    return 'Migration completed';
+});
+//Clear route cache:
+Route::get('/route-cache', function() {
+Artisan::call('route:cache');
+    return 'Routes cache has been cleared';
+});
+
+//Clear config cache:
+Route::get('/config-cache', function() {
+  Artisan::call('config:cache');
+return 'Config cache has been cleared';
+}); 
+
+// Clear view cache:
+Route::get('/view-clear', function() {
+    Artisan::call('view:clear');
+return 'View cache has been cleared';
+});
+
+
+
 Route::get('/kyctesting', function(){
     return view('testing.kycDetailes');
 });

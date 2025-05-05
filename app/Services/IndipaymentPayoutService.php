@@ -14,12 +14,11 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
 
-class PayoutService
+class IndipaymentPayoutService
 {
 
   protected $baseUrl = "";
   protected $token = "";
-  protected $operator = "";
   protected $userBankService;
 
   // Constructor to initialize API details from the database
@@ -28,20 +27,22 @@ class PayoutService
     $this->userBankService = $userBankService;
     // Assuming you're fetching the first record from the 'tbl_apis' table
     // You can modify this logic based on your requirements (e.g., selecting based on 'mode' or other conditions)
-    $apiDetails = Api::where('name', 'apisol-payout')->where('status', 'active')->first(); // Fetch the first active API record
+    $apiDetails = Api::where('name', 'indipayment')->where('status', 'active')->first(); // Fetch the first active API record
 
     if ($apiDetails) {
       $this->baseUrl = $apiDetails->base_url;
       $this->token = $apiDetails->token;
-      $this->operator = $apiDetails->secret;
     }
   }
 
   public function payout(string $amount, string $userId, string $bankId, string $txnMode)
   {
+    if(!$this->baseUrl){
+        return ['status'=>false, 'message'=>'Bank Service Down'];
+    }
 
     // The endpoint for PAN verification
-    $endpoint = '/payout/index.php';
+    $endpoint = '/api/payout/transaction';
 
     $userBank = $this->userBankService->getById($bankId);
     $user =  User::find($userId)->first();
@@ -51,7 +52,10 @@ class PayoutService
     if($user->wallet < $amount){
       return ['status'=>false, 'message'=>'Insufficient Balance to complete this transaction.'];
     }
-   
+
+    // Create Transaction Id
+    $txnId = uniqid('TXN'); // You can also use any of the other methods above
+
     $charges = UserCharges::where('user_id', $userId)
               ->whereHas('charge', function ($query) {
                   $query->where('name', 'payout');
@@ -74,21 +78,18 @@ class PayoutService
       return ['status'=>false, 'message'=>'payout scheem not set'];
     }
 
-    // Create Transaction Id
-    $txnId = uniqid('TXN'); // You can also use any of the other methods above
-
     // Prepare the data (payload) to send in the request
     $reqBody = [
-      "operator" => $this->operator,
-      // "bank" => $userBank->bank_name,
-      "unique_id" => $txnId,
-      "amount" => $transferAmount,
-      "mobile" => $user->mobile, // Replace with actual mobile number
-      "type" => 'ac', // Replace with actual mobile number
-      "account" => $userBank->account_no, // Replace with actual account number
+      "token" => $this->token,
+      "bank" => $userBank->bank_name,
+      "refid" => $txnId,
       "ifsc" => $userBank->ifsc,
-      "holder" => $userBank->account_holder_name,
-      "webhook" => 'https://merchant.startpay.com/api/payout/callback'
+      "account" => $userBank->account_no, // Replace with actual account number
+      "mobile" => $user->mobile, // Replace with actual mobile number
+      "name" => $userBank->account_holder_name,
+      "amount" => $transferAmount,
+      'admin_charge' => $charge, // The payout Charge
+      "transferMode" => $txnMode
     ];
 
     // Insert Data in Payout Table Before Transaction
@@ -96,7 +97,6 @@ class PayoutService
       'user_id' => $userId,
       'txn_id' => $txnId, // Generate or fetch the transaction ID
       'amount' => $amount, // The payout amount
-      'admin_charge' => $charge, // The payout Charge
       'bank_id' => $userBank->id, // Bank account number
       'account_no' => $userBank->account_no, // Bank account number
       'ifsc' => $userBank->ifsc, // Bank IFSC code
@@ -105,19 +105,13 @@ class PayoutService
       'closing_bal'=>$user->wallet-$amount,
     ]);
 
-    $headers = [
-      'Content-Type' => 'application/json',
-      'Authorization' => "Bearer $this->token",
-      'Cookie' => 'PHPSESSID=9e92f3419eccf32c362b64b5726579bc',
-  ];
-
 
     $logData = IndipaymentApiLog::create([
       'user_id' => $userId, // User ID associated with the log
       'url' => $this->baseUrl . $endpoint, // The URL of the API request
       'type' => 'payout', // Type of the request (e.g., GET, POST)
       'txn_id' => $txnId, // Transaction ID
-      'request_headers' => json_encode($headers), // Request headers as JSON string
+      'request_headers' => null, // Request headers as JSON string
       'request_body' => json_encode($reqBody), // Request body as JSON string
       'response_body' => null, // Response body as JSON string
     ]);
@@ -125,8 +119,9 @@ class PayoutService
     $user->wallet = $user->wallet - $amount;
     $user->save();
 
+
     // Send POST request
-    $response = Http::withHeaders($headers)->post($this->baseUrl . $endpoint, $reqBody);
+    $response = Http::post($this->baseUrl . $endpoint, $reqBody);
 
     // Update API Log Data
     $logData = IndipaymentApiLog::where('txn_id','=',$txnId)->first();
@@ -138,7 +133,7 @@ class PayoutService
 
       if($response->json()['status'] == 'success'){
         $payoutData->status = 'success';
-        // $payoutData->bank_ref = $response->json()['rrn'];
+        $payoutData->bank_ref = $response->json()['rrn'];
         $payoutData->save();
 
         return ['status'=>true, 'message'=>"Transaction Successful"];
@@ -161,12 +156,15 @@ class PayoutService
       $user->save();
       $payoutData->status = 'failed';
       $payoutData->save();	
+
       return ['status'=>false, 'message'=>"Transaction Failed"];
+
     }
+
   }
 
   public function checkStatus(string $userRefId){
-    $endpoint = '/payout/payout_status.php';
+    $endpoint = '/api/payout/status';
 
     $transaction = PayoutModel::where('txn_id','=',$userRefId)->first();
 
@@ -185,37 +183,19 @@ class PayoutService
     $user =  User::find($transaction->user_id)->first();
 
     $reqBody = [
-      "operator" => $this->operator,
-      "unique_id" => $transaction->txn_id,
+      "token" => $this->token,
+      "refid" => $transaction->txn_id,
     ];
 
-    $headers = [
-      'Content-Type' => 'application/json',
-      'Authorization' => "Bearer $this->token",
-      'Cookie' => 'PHPSESSID=9e92f3419eccf32c362b64b5726579bc',
-  ];
-
-    $response = Http::withHeaders($headers)->post($this->baseUrl . $endpoint, $reqBody);
-
-    IndipaymentApiLog::create([
-      'user_id' =>  $transaction->user_id, // User ID associated with the log
-      'url' => $this->baseUrl . $endpoint, // The URL of the API request
-      'type' => 'payout', // Type of the request (e.g., GET, POST)
-      'txn_id' =>$transaction->txn_id, // Transaction ID
-      'request_headers' => json_encode($headers), // Request headers as JSON string
-      'request_body' => json_encode($reqBody), // Request body as JSON string
-      'response_body' => json_encode($response->json()), // Response body as JSON string
-    ]);
-
-    
+    $response = Http::post($this->baseUrl . $endpoint, $reqBody);
      // Check the response status
     if ($response->successful()) {
       if($response->json()['status'] == 'success'){
         $transaction->status = 'success';
-        // $transaction->bank_ref = $response->json()['rrn'];
+        $transaction->bank_ref = $response->json()['rrn'];
         $transaction->save();
 
-        return ['status'=>"success", 'message'=>"Transaction Successful", 'data'=> ['bank_ref_id'=>'XXXXXXXXXXX']];
+        return ['status'=>"success", 'message'=>"Transaction Successful", 'data'=> ['bank_ref_id'=>$response->json()['rrn']]];
 
       }else if($response->json()['status'] == 'failed'){
         $user->wallet = $user->wallet + $transaction->amount;
@@ -236,4 +216,5 @@ class PayoutService
       return ['status'=>'failed', 'message'=>"Transaction Failed", 'data'=> null];
     }
   }
+
 }
