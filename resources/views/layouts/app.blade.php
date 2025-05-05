@@ -25,6 +25,9 @@
   </head>
   <body>
 <style>
+div.dt-buttons>.dt-button, div.dt-buttons>div.dt-button-split .dt-button {
+    background: white !important;
+}
 table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
     background-color: transparent;
 }
