@@ -33,7 +33,7 @@
                                 <!-- Account Number -->
                                 <div class="flex flex-col gap-2">
                                     <label class="text-base text-bgray-600 dark:text-bgray-50 font-medium">Account No.</label>
-                                    <input type="number" name="account_no" value="{{ old('account_no', $bank->account_no ?? '') }}"
+                                    <input type="text" name="account_no" value="{{ old('account_no', $bank->account_no ?? '') }}"
                                            class="bg-bgray-50 dark:bg-darkblack-500 dark:text-white p-4 rounded-lg h-14 border-0" />
                                     <x-input-error :messages="$errors->get('account_no')" class="mt-2" />
                                 </div>

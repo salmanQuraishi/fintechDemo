@@ -27,30 +27,27 @@ class UserController extends Controller
         $users = User::get();
         return view('role-permission.user.index', ['users' => $users]);
     }
-
-    public function getUsers(){
-        $users = User::get();
-        return DataTables::of(User::with('roles'))->addColumn('role', function ($user) {
-            return $user->getRoleNames()->map(function ($role) {
-                return '<label class="rounded-md bg-bgray-50 px-4 py-1.5 text-sm font-semibold leading-[22px] text-bgray-400 dark:bg-darkblack-500">'
-                    . $role . '</label>';
-            })->implode(' ');
-        })
-        ->addColumn('action', function ($user) {
-            $actions = '';
+    public function getUsers()
+    {
+        $users = User::with('roles')->get(); // Eager load roles once
     
-            if (Gate::allows('update user')) {
-                $actions .= '<a href="'.route('users.edit', $user->id).'" class="edit-btn bg-success-50 px-4 py-1.5 text-sm text-success-400 rounded-md mr-1">Edit</a> &nbsp;';
-            }
-
-            if (Gate::allows('user charges')) {
-                $actions .= ' <a href="'.route('admin.usercharges', encrypt($user->id)).'" class="delete-btn bg-[#FAEFEE] px-4 py-1.5 text-sm text-[#FF4747] rounded-md">Scheem</a>';
-            }
+        // Add encrypted_id to each user
+        $users->transform(function ($user) {
+            $user->encrypted_id = encrypt($user->id);
+            return $user;
+        });
     
-            return $actions;
-        })
-        ->rawColumns(['action','role'])->make(true);
+        return DataTables::of($users)
+            ->addColumn('role', function ($user) {
+                return $user->getRoleNames()->map(function ($role) {
+                    return '<label class="rounded-md bg-bgray-50 px-4 py-1.5 text-sm font-semibold leading-[22px] text-bgray-400 dark:bg-darkblack-500">'
+                        . $role . '</label>';
+                })->implode(' ');
+            })
+            ->rawColumns(['role'])
+            ->make(true);
     }
+    
 
     // public function create()
     // {

@@ -76,6 +76,7 @@ class AdminBankController extends Controller
     public function edit($id)
     {
         $bank = Bank::where('id','=',$id)->first();
+        // dd($bank);
         return view('admin-bank.form', compact('bank'));
     }
 
