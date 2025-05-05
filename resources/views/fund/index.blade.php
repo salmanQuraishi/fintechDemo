@@ -1,5 +1,4 @@
 <x-app-layout>
-
     <main class="w-full xl:px-[48px] px-6 pb-6 xl:pb-[48px] sm:pt-[156px] pt-[100px] min-h-screen">
         <!-- write your code here-->
         <div class="2xl:flex 2xl:space-x-[48px]">
@@ -66,234 +65,48 @@
                         <x-input-success :messages="session('status')" />
 
                         <div class="table-content w-full overflow-x-auto">
-                            <table class="w-full">
-                                <tr class="border-b border-bgray-300 dark:border-darkblack-400">
-                                    <td class="py-5 px-6 xl:px-0 w-[250px] lg:w-auto inline-block">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">
-                                                #</span>
-                                            <span>
-                                                <svg width="14" height="15" viewbox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M10.332 1.31567V13.3157" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M5.66602 11.3157L3.66602 13.3157L1.66602 11.3157"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M3.66602 13.3157V1.31567" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M12.332 3.31567L10.332 1.31567L8.33203 3.31567"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span
-                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Deposit
-                                                Bank Details</span>
-                                            <span>
-                                                <svg width="14" height="15" viewbox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M10.332 1.31567V13.3157" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M5.66602 11.3157L3.66602 13.3157L1.66602 11.3157"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M3.66602 13.3157V1.31567" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M12.332 3.31567L10.332 1.31567L8.33203 3.31567"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Pay
-                                                Slip</span>
-                                            <span>
-                                                <svg width="14" height="15" viewbox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M10.332 1.31567V13.3157" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M5.66602 11.3157L3.66602 13.3157L1.66602 11.3157"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M3.66602 13.3157V1.31567" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M12.332 3.31567L10.332 1.31567L8.33203 3.31567"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span
-                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Amount</span>
-                                            <span>
-                                                <svg width="14" height="15" viewbox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M10.332 1.31567V13.3157" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M5.66602 11.3157L3.66602 13.3157L1.66602 11.3157"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M3.66602 13.3157V1.31567" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M12.332 3.31567L10.332 1.31567L8.33203 3.31567"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span
-                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Remark</span>
-                                            <span>
-                                                <svg width="14" height="15" viewbox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M10.332 1.31567V13.3157" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M5.66602 11.3157L3.66602 13.3157L1.66602 11.3157"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M3.66602 13.3157V1.31567" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M12.332 3.31567L10.332 1.31567L8.33203 3.31567"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span
-                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Status</span>
-                                            <span>
-                                                <svg width="14" height="15" viewbox="0 0 14 15" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M10.332 1.31567V13.3157" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M5.66602 11.3157L3.66602 13.3157L1.66602 11.3157"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M3.66602 13.3157V1.31567" stroke="#718096"
-                                                        stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                    <path d="M12.332 3.31567L10.332 1.31567L8.33203 3.31567"
-                                                        stroke="#718096" stroke-width="1.5" stroke-linecap="round"
-                                                        stroke-linejoin="round"></path>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span
-                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Date</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-5 px-6 xl:px-0">
-                                        <div class="w-full flex space-x-2.5 items-center">
-                                            <span
-                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Action</span>
-
-                                        </div>
-                                    </td>
-                                </tr>
-                                @foreach ($fund as $funds)
+                            <table id="fundTable" class="display w-full">
+                                <thead>
                                     <tr class="border-b border-bgray-300 dark:border-darkblack-400">
+                                        <td class="py-5 px-6 xl:px-0 w-[250px] lg:w-auto">
+                                                <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">
+                                                    #</span>
+                                        </td>
+                                        @hasanyrole('admin|super-admin|staff')
                                         <td class="py-5 px-6 xl:px-0">
-                                            <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
-                                                {{ $loop->iteration }}
-                                            </p>
+                                            <span
+                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">User</span>
+                                            <span>
+                                        </th>
+                                        @endhasanyrole
+                                        <td class="py-5 px-6 xl:px-0">
+                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Deposit
+                                                    Bank Details</span>
                                         </td>
                                         <td class="py-5 px-6 xl:px-0">
-                                            <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
-                                                Bank : {{ $funds->deposit_bank }}<br>
-                                                A/C : {{ $funds->from_account }}<br>
-                                                Mode : {{ $funds->payment_mode }}<br>
-                                                From A/C : {{ $funds->from_account }}
-                                            </p>
+                                            <div class="w-full flex space-x-2.5 items-center">
+                                                <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Pay
+                                                    Slip</span>
+                                            </div>
                                         </td>
                                         <td class="py-5 px-6 xl:px-0">
-                                            <button
-                                                class="view-slip-btn rounded-md bg-[#FDF9E9] px-4 py-1.5 text-sm font-semibold leading-[22px] text-warning-300 dark:bg-darkblack-500"
-                                                data-image="{{ url("/$funds->pay_slip") }}">
-                                                View Slip
-                                            </button>
+                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Amount</span>
                                         </td>
                                         <td class="py-5 px-6 xl:px-0">
-                                            <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
-                                                ₹{{ $funds->amount }}
-                                            </p>
+                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Remark</span>
                                         </td>
                                         <td class="py-5 px-6 xl:px-0">
-                                            <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
-                                                {{ $funds->remark }}
-                                            </p>
+                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Status</span>
                                         </td>
                                         <td class="py-5 px-6 xl:px-0">
-                                            <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
-                                                @if ($funds->status === "pending")
-                                                    <button
-                                                        class="rounded-md bg-[#FDF9E9] px-4 py-1.5 text-sm font-semibold leading-[22px] text-warning-300 dark:bg-darkblack-500">Pending</button>
-                                                @elseif ($funds->status === "success")
-                                                    <button
-                                                        class="rounded-md bg-[#FDF9E9] px-4 py-1.5 text-sm font-semibold leading-[22px] text-success-300 dark:bg-darkblack-500">Approved</button>
-                                                @elseif ($funds->status === "failed")
-                                                    <button
-                                                        class="rounded-md bg-[#FAEFEE] px-4 py-1.5 text-sm font-semibold leading-[22px] text-[#FF4747] dark:bg-darkblack-500">Rejected</button>
-                                                @endif
-                                            </p>
+                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Date</span>
                                         </td>
                                         <td class="py-5 px-6 xl:px-0">
-                                            <p class="font-medium text-base text-bgray-900 dark:text-bgray-50">
-                                                {{ $funds->created_at }}
-                                            </p>
-                                        </td>
-                                        <td class="py-5 px-6 xl:px-0">
-                                            @can('update fund')
-                                                @if ($funds->status === "pending")
-                                                    <form action="{{ route('fund.update', $funds->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <select name="status"
-                                                            class="text-bgray-800 border border-bgray-300 dark:border-darkblack-400 dark:bg-darkblack-500 dark:text-white focus:border-success-300 focus:ring-0 placeholder:text-bgray-500">
-                                                            <option value="success">Approve</option>
-                                                            <option value="failed">Reject</option>
-                                                        </select>
-                                                        <br>
-                                                        <button type="submit"
-                                                            class="bg-[#FDF9E9] px-4 py-1.5 text-xs text-warning-300 dark:bg-darkblack-500">Submit</button>
-                                                    </form>
-                                                @endif
-                                            @endcan
+                                            <span class="text-base font-medium text-bgray-600 dark:text-bgray-50">Action</span>
                                         </td>
                                     </tr>
-                                @endforeach
-
-                            </table>
+                                </thead>
+                            </table>                            
                         </div>
                     </div>
                 </div>
@@ -430,6 +243,45 @@
         <script src="{{ asset('/') }}assets/js/jquery-3.6.0.min.js"></script>
         <script src="{{ asset('/') }}assets/js/flatpickr.js"></script>
 
+        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+        <script>
+            $(document).ready(function() {
+                $('#fundTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: '{{ route('funds.data') }}',
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'csv', 'excel', 'pdf', 'print'
+                    ],
+                    columns: [
+                        { data: 'id', name: 'id' },
+                        { data: 'user_details', name: 'user_details' },
+                        { data: 'deposit_bank', name: 'deposit_bank' },
+                        { data: 'pay_slip', name: 'pay_slip' },
+                        { data: 'amount', name: 'amount' },
+                        { data: 'remark', name: 'remark' },
+                        { data: 'status', name: 'status' },
+                        { data: 'created_at', name: 'created_at' },
+                        { data: 'action', name: 'action', orderable: false, searchable: false }
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+                        $('td', row).each(function () {
+                            $(this).addClass("font-medium text-sm text-bgray-900 dark:text-bgray-50");
+                        });
+                    }
+                });
+            });
+        </script>
+
         <script>
             function openMultiStepModal(button) {
                 const bankId = button.getAttribute('data-id');
@@ -495,6 +347,7 @@
                 arrows: false,
             });
         </script>
+
 
         <script>
             $(document).ready(function () {

@@ -6,6 +6,7 @@ use App\Models\Bank;
 use Illuminate\Http\Request;
 use App\Models\Fund;
 use App\Models\User;
+use Yajra\DataTables\Facades\DataTables;
 
 class FundController extends Controller
 {
@@ -37,6 +38,64 @@ class FundController extends Controller
 
         return view('fund.index', compact('fund','adminBank'));
     }
+
+    public function getFunds(Request $request)
+    {
+        
+        if(auth()->user()->roles->pluck('name')->implode(', ') == "user"){
+            $fund = Fund::where('type', 'offline')
+                    ->where('user_id', auth()->user()->id)
+                    ->get();
+        }
+
+        if(auth()->user()->roles->pluck('name')->implode(', ') == "apiuser"){
+            $fund = Fund::where('type', 'offline')
+                    ->where('user_id', auth()->user()->id)
+                    ->get();
+        }
+
+        if (auth()->user()->roles->pluck('name')->intersect(['super-admin', 'admin', 'staff'])->isNotEmpty()) {
+            $fund = Fund::where('type', 'offline')->get();
+        }
+    
+        return DataTables::of($fund)
+            ->addIndexColumn()
+            ->addColumn('user_details', function ($fund) {
+                if (auth()->user()->hasAnyRole(['admin', 'super-admin', 'staff'])) {
+                    return $fund->user->name;
+                }
+                return '-';
+            })
+            ->addColumn('deposit_bank', function ($fund) {
+                return "Bank: {$fund->deposit_bank}<br>A/C: {$fund->from_account}<br>Mode: {$fund->payment_mode}";
+            })
+            ->addColumn('pay_slip', function ($fund) {
+                return '<button class="view-slip-btn" data-image="' . asset($fund->pay_slip) . '">View Slip</button>';
+            })
+            ->addColumn('status', function ($fund) {
+                $class = match ($fund->status) {
+                    'pending' => 'text-warning-300',
+                    'success' => 'text-success-300',
+                    'failed'  => 'text-[#FF4747]',
+                    default   => ''
+                };
+                return "<span class='$class'>" . ucfirst($fund->status) . "</span>";
+            })
+            ->addColumn('action', function ($fund) {
+                if (auth()->user()->can('update fund') && $fund->status === 'pending') {
+                    $form = '<form action="' . route('fund.update', $fund->id) . '" method="POST">';
+                    $form .= csrf_field() . method_field('PUT');
+                    $form .= '<select name="status" style="color:black"><option value="success">Approve</option><option value="failed">Reject</option></select><br>';
+                    $form .= '<button type="submit" class="rounded-md bg-bgray-50 px-4 py-1.5 text-sm font-semibold leading-[22px] text-bgray-400 dark:bg-darkblack-400">Submit</button>';
+                    $form .= '</form>';
+                    return $form;
+                }
+                return '-';
+            })
+            ->rawColumns(['user_details', 'deposit_bank', 'pay_slip', 'status', 'action'])
+            ->make(true);
+    }
+    
 
     public function fundrequest(Request $request)
     {

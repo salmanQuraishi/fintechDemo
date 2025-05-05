@@ -27,6 +27,7 @@ use App\Http\Controllers\PayinController;
 use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\UserChargesController;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () { return view('welcome'); });
 
@@ -110,6 +111,7 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
     
 
     Route::get('/fund/history', [FundController::class, 'view'])->name('fund.view');
+    Route::get('/funds/data', [FundController::class, 'getFunds'])->name('funds.data');
     Route::post('/fund/request', [FundController::class, 'fundrequest'])->name('fund.request');
     Route::put('/fund/update/{id}', [FundController::class, 'update'])->name('fund.update');
 
@@ -317,7 +319,7 @@ return 'Config cache has been cleared';
 // Clear view cache:
 Route::get('/view-clear', function() {
     Artisan::call('view:clear');
-return 'View cache has been cleared';
+    return 'View cache has been cleared';
 });
 
 
