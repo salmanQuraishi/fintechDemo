@@ -28,15 +28,6 @@ class ApiLoginController extends Controller
             'mobile' => ['required', 'digits:10', 'regex:/^[6-9]\d{9}$/'],
         ]);
 
-        $user = User::where('mobile', $request->mobile)->first();
-
-        if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'No user found with this mobile number.',
-            ], 404);
-        }
-
         $sendOtp = $this->authService->generateOtp($request->mobile, 'auth');
         
         if ($sendOtp['success'] == true) {
@@ -84,9 +75,11 @@ class ApiLoginController extends Controller
 
             }else{
                 return response()->json([
-                    'status' => false,
-                    'message' => 'Invalid Mobile Number',
-                ], 400);
+                    'status' => true,
+                    'data' => null,
+                    'token' => null,
+                    'message' => 'mobile number not register'
+                ],200);
             }
             
         } else {
