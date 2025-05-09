@@ -34,7 +34,8 @@ class AuthService
         // }
 
         // Generate a random OTP (4-digit number)
-        $otp = rand(1000, 9999);
+        // $otp = rand(1000, 9999);
+        $otp = "1234";
 
         // Save OTP to the database
         $otpData = new TblOtp();

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\City;
+use App\Models\State;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Services\AuthService;
 use Spatie\Permission\Models\Role;
-use \App\Services\SandboxApiService;
-use \App\Services\userService;
+use App\Services\SandboxApiService;
+use App\Services\UserService;
 use Illuminate\Validation\ValidationException;
 
 class ApiLoginController extends Controller
@@ -42,7 +42,7 @@ class ApiLoginController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Failed to send OTP. Please try again.'
-            ],500);
+            ],200);
 
         }
     }
@@ -60,7 +60,7 @@ class ApiLoginController extends Controller
 
             if($user){
 
-                $token = $user->createToken('api_token')->plainTextToken;
+                $token = $user->createToken('token')->plainTextToken;
 
                 return response()->json([
                     'status' => true,
@@ -86,7 +86,7 @@ class ApiLoginController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid OTP',
-            ], 400);
+            ], 200);
         }
     }
 
@@ -103,7 +103,7 @@ class ApiLoginController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $e->errors(),
-            ], 422);
+            ], 200);
         }
     
         // PAN Verification (production mode only)
@@ -113,7 +113,7 @@ class ApiLoginController extends Controller
                 return response()->json([
                     'status' => false,
                     'message' => $resp['errors'],
-                ], 400);
+                ], 200);
             }
         }
     
@@ -123,7 +123,7 @@ class ApiLoginController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $user['message'],
-            ], 400);
+            ], 200);
         }
     
         // Assign role
@@ -133,7 +133,7 @@ class ApiLoginController extends Controller
         }
     
         // Generate token
-        $token = $user['user']->createToken('api_token')->plainTextToken;
+        $token = $user['user']->createToken('token')->plainTextToken;
     
         return response()->json([
             'status' => true,
@@ -146,5 +146,36 @@ class ApiLoginController extends Controller
             'message' => 'User registered & logged in!'
         ],200);
     }
+
+    public function getState()
+    {
+        $states = State::get()->all();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'List of all states retrieved successfully',
+            'data' => $states
+        ],200);
+    }
+    public function getCity($id)
+    {            
+        $cities = City::where('state_id', '=', $id)
+            ->get()->all();
+
+        if ($cities) {
+            return response()->json([
+                'status' => true,
+                'message' => 'List of all cities retrieved successfully',
+                'data' => $cities
+            ],200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'city not found.',
+                'data' => null
+            ],200);
+        }
+    }
+
     
 }
