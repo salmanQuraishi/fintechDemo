@@ -123,7 +123,8 @@
         <script>
             const userPermissions = {
                 canUpdateUser: @json(auth()->user()->can('update user')),
-                canUserCharges: @json(auth()->user()->can('user charges'))
+                canUserCharges: @json(auth()->user()->can('user charges')),
+                canFundSettlement: @json(auth()->user()->can('fund settlement'))
             };
         </script>        
         <script>
@@ -173,6 +174,10 @@
 
                                 if (userPermissions.canUserCharges) {
                                     dropdownItems += `<li><a href="/user/schemes/create/${row.encrypted_id}">Scheme</a></li>`;
+                                }
+
+                                if (userPermissions.canFundSettlement) {
+                                    dropdownItems += `<li><a href="/user/fund/transfer/${row.encrypted_id}">Fund Transfer</a></li>`;
                                 }
 
                                 return `

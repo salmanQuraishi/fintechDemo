@@ -86,6 +86,13 @@ Route::group(['middleware' => ['role:super-admin|admin|staff|user|apiuser']], fu
 
 
     });
+
+    Route::prefix('user')->name('admin.')->group(function () {
+
+        Route::get('/fund/transfer/{user}', [FundController::class, 'fundTransfer'])->name('fundTransger');
+        
+    });
+    Route::get('/fund/transfer/data', [FundController::class, 'GetTransferData'])->name('GetTransferData');
     
     Route::post('/get/city/list', [ProfileController::class, 'getCity'])->name('getCity');
     Route::get('/user/profile', [ProfileController::class, 'userprofile'])->name('user.profile.edit');

@@ -12,7 +12,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login', [ApiAuthController::class,'login']);
+use App\Http\Controllers\Auth\ApiLoginController;
+
+Route::post('/v1/login', [ApiLoginController::class, 'login']);
+Route::post('/v1/otp-verify', [ApiLoginController::class, 'otpVerify']);
+Route::post('/v1/register', [ApiLoginController::class, 'register']);
+
+
+
+
 Route::post('/payout', [ApiPayoutController::class,'payout']);
 Route::post('/payout/status', [ApiPayoutController::class,'checkStatus']);
 Route::post('/payout/callback', [ApiPayoutController::class,'callback']);
@@ -21,3 +29,8 @@ Route::post('/payin/callback',[PayinController::class, 'callback']);
 
 Route::post('/payin', [ApiPayinController::class,'payin']);
 Route::post('/payin/checkstatus', [ApiPayinController::class,'checkStatus']);
+
+
+
+
+

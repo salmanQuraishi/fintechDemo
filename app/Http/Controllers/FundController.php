@@ -6,6 +6,8 @@ use App\Models\Bank;
 use Illuminate\Http\Request;
 use App\Models\Fund;
 use App\Models\User;
+use App\Models\WalletTransfer;
+use Illuminate\Support\Facades\Crypt;
 use Yajra\DataTables\Facades\DataTables;
 
 class FundController extends Controller
@@ -163,4 +165,31 @@ class FundController extends Controller
         }
         return redirect()->back()->with('success', 'Fund status updated successfully!');
     }
+
+    
+    // fund transfer
+
+    public function fundTransfer($encryptedUserId) {
+        
+        $userId = Crypt::decrypt($encryptedUserId);
+    
+        
+        $userData = User::find($userId);
+    
+        if (!$userData) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+        
+        return view('fund.transferForm',compact('userData'));
+    }
+
+    public function GetTransferData()
+    {
+        $WalletTransfer = WalletTransfer::where('admin_id','=',auth()->user()->id)
+                          ->with('user','admin')
+                          ->get();
+        return DataTables::of($WalletTransfer)->make(true);
+    }
+    
+
 }

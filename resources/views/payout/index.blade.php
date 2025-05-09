@@ -10,58 +10,68 @@
                             <table id="payouts-table" style="width: 100%">
                                 <thead>
                                     <tr class="border-b border-bgray-300 dark:border-darkblack-400">
-                                        <td>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">#</span>
                                             <span>
-                                        </td>
+                                        </th>
                                         @if (auth()->user()->hasAnyRole(['admin|super-admin|staff']))
-                                        <td>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">User</span>
                                             <span>
-                                        </td>
+                                        </th>
                                         @endif
-                                        <td>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Bank Details</span>
                                             <span>
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">TXN Id</span>
                                             <span>
-                                        </td>
+                                        </th>
+                                        <th>
+                                            <span
+                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">Reference No.</span>
+                                            <span>
+                                        </th>
+                                      	<th>
+                                            <span
+                                                class="text-base font-medium text-bgray-600 dark:text-bgray-50">RRN</span>
+                                            <span>
+                                        </th>
                                         <td>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Amount</span>
                                             <span>
                                         </td>
-                                        <td>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Open bal.</span>
                                             <span>
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Closing bal.</span>
                                             <span>
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Status</span>
                                             <span>
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Date</span>
                                             <span>
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             <span
                                                 class="text-base font-medium text-bgray-600 dark:text-bgray-50">Action</span>
                                             <span>
-                                        </td>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -80,14 +90,6 @@
         <script src="{{ asset('/') }}assets/js/flatpickr.js"></script>
         <script src="{{ asset('/') }}assets/js/slick.min.js"></script>
         <script src="{{ asset('/') }}assets/js/main.js"></script>
-        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
         <script>
             $(document).ready(function () {
 
@@ -126,6 +128,11 @@
                         }
                     },
                     { data: 'txn_id', name: 'txn_id' },
+                    { data: 'user_txn_id', name: 'user_txn_id' },
+                    { data: 'bank_ref', name: 'bank_ref', render: function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }},
+
                     { data: 'amount', name: 'amount' },
                     { data: 'opening_bal', name: 'opening_bal' },
                     { data: 'closing_bal', name: 'closing_bal' },
@@ -183,10 +190,6 @@
                     processing: true,
                     serverSide: true,
                     ajax: "{{ route('get.payouts') }}",
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'csv', 'excel', 'pdf', 'print'
-                    ],
                     columns: columns,
                     createdRow: function (row, data, dataIndex) {
                         $('td', row).each(function () {
