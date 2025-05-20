@@ -143,7 +143,7 @@ class BusinessKycController extends Controller
 
         $BusinessKyc = BusinessKyc::where('user_id', auth()->id())->first();
 
-        $BusinessKycCount = $BusinessKyc->count();
+        $BusinessKycCount = $BusinessKyc ? 1 : 0;
 
         $documents = DocumentModel::where('business_type_id','=',$BusinessKyc->business_type_id)
                                     ->where('status','=','active')

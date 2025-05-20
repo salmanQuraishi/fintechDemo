@@ -25,6 +25,24 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user/data', [APICommonController::class, 'getUser']);
         Route::post('/update-profile', [APICommonController::class, 'updateProfile']);
+
+        Route::get('/nominee/info', [APICommonController::class, 'nomineeinfo']);
+        Route::post('/nominee/info/update', [APICommonController::class, 'updateNominee']);
+        
+        Route::get('/activity', [APICommonController::class, 'userActivity']);
+        
+        Route::get('/banks/list', [APICommonController::class, 'bankList']);
+        Route::post('/banks/create', [APICommonController::class, 'bankCreate']);
+        Route::post('/banks/edit', [APICommonController::class, 'bankEdit']);
+        Route::post('/banks/update', [APICommonController::class, 'bankUpdate']);
+        
+        Route::get('/business/overview', [APICommonController::class, 'businessOverview']);
+        Route::post('/overview/request', [APICommonController::class, 'overviewRequest']);
+        Route::get('/get/business/sub/category/list', [APICommonController::class, 'getBusinessSubCategory']);
+        
+        Route::get('/business/details', [APICommonController::class, 'businessDetails']);
+        Route::post('/business/details/request', [APICommonController::class, 'businessDetailsRequest']);
+
     });
 });
 

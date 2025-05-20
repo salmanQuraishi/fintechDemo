@@ -27,7 +27,7 @@
                 type="{{ $doc->type }}" 
                 name="{{ $name }}" 
                 id="{{ $name }}" 
-                @if($doc->type !== 'file') value="{{ $value }}" @endif
+                @if($doc->type !== 'file' && is_string($value)) value="{{ $value }}" @endif
                 class="text-base border h-14 w-full rounded-lg px-4 py-3.5 dark:bg-darkblack-500 dark:text-white"
                 placeholder="{{ $doc->label }}"
               >
