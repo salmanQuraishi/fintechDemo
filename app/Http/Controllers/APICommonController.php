@@ -12,14 +12,23 @@ use App\Models\DocumentModel;
 use App\Models\Nominee;
 use App\Models\PayoutModel;
 use App\Models\State;
+use App\Models\User;
 use App\Models\UserBankModel;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Psy\CodeCleaner\ReturnTypePass;
+use App\Services\SandboxApiService as sendBox;
+use App\Services\UserService;
 
 class APICommonController extends Controller
 {
+    protected $userService;
+    protected $Verification;
+    public function __construct(UserService $userService, sendBox $sendBox){
+        $this->userService = $userService;
+        $this->Verification = $sendBox;
+    }
     public function getUser(Request $request)
     {
         $user = $request->user();
@@ -54,7 +63,8 @@ class APICommonController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->errors(),
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
             ], 200);
         }
 
@@ -132,7 +142,8 @@ class APICommonController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->errors(),
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
             ], 200);
         }
 
@@ -199,7 +210,8 @@ class APICommonController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->errors(),
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
             ], 200);
         }
 
@@ -254,7 +266,7 @@ class APICommonController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid bank ID',
-            ], 422);
+            ], 200);
         }
 
         $userBank = UserBankModel::where('id', $request->bankid)
@@ -298,7 +310,8 @@ class APICommonController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->errors(),
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
             ], 200);
         }
 
@@ -393,13 +406,14 @@ class APICommonController extends Controller
                 'businessType' => 'required|exists:business_types,id',
                 'businessCategory' => 'required|exists:business_categories,id',
                 'subCategory' => 'required|exists:business_sub_categories,id',
-                'businessDescription' => 'nullable|string|max:500',
+                'businessDescription' => 'nullable|string|max:200',
                 'paymentStatus' => 'required|in:Without website/app,On my website/app',
             ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->errors(),
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
             ], 200);
         }
 
@@ -459,7 +473,8 @@ class APICommonController extends Controller
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->errors(),
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
             ], 200);
         }
 
@@ -489,7 +504,7 @@ class APICommonController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Unauthorized'
-            ], 401);
+            ], 200);
         }
 
         $businessKyc = BusinessKyc::select(
@@ -550,7 +565,7 @@ class APICommonController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Unauthorized'
-            ], 401);
+            ], 200);
         }
 
         $businessKyc = BusinessKyc::where('user_id', $user->id)->first();
@@ -606,7 +621,7 @@ class APICommonController extends Controller
                 'status' => false,
                 'message' => 'Validation failed.',
                 'errors' => $e->errors()
-            ], 422);
+            ], 200);
         }
 
         $documentData = $this->processDocumentFields($request, $documents);
@@ -646,5 +661,179 @@ class APICommonController extends Controller
     
         return $documentData;
     }
+
+    public function adminBanks(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'Unauthorized'], 200);
+        }
+
+        $banks = Bank::where('status','active')->get(['id','acc_holder_name','bank_name','account_no','ifsc','type']);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Admin Banks retrieved successfully',
+            'data' => $banks
+        ],200);
+    }
+    
+    public function sendEmail(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 200);
+        }
+
+        if ($user->kyc_verified === 'verified') {
+            return response()->json([
+                'status' => true,
+                'message' => 'Email already verified'
+            ], 200);
+        }
+
+        $result = $this->userService->sendEmailVerifyOtp($user->email, $user->name);
+
+        if (!empty($result['status']) && $result['status'] === true) {
+            return response()->json([
+                'status' => true,
+                'message' => 'OTP sent successfully'
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Something went wrong while sending the OTP'
+        ], 200);
+    }
+    public function verifyEmailotp(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 200);
+        }
+
+        if ($user->kyc_verified === 'verified') {
+            return response()->json([
+                'status' => true,
+                'message' => 'Email already verified'
+            ], 200);
+        }
+
+        try {
+            $request->validate([
+                'otp' => 'required|numeric'
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 200);
+        }
+
+        $verificationResult = $this->userService->verifyEmailOtp($user->email, $request->otp);
+
+        if ($verificationResult['status']) {
+            $user->email_verified = 'verified';
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'OTP is correct. Email verified successfully.'
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Incorrect OTP.'
+            ], 200);
+        }
+    }
+    
+    public function aadharsendOtp(Request $request){
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 200);
+        }
+
+        try {
+            $request->validate([
+                'aadhar' => ['required', 'digits:12', 'regex:/^[2-9]{1}[0-9]{11}$/']
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 200);
+        }
+    
+        $sendOtp = $this->Verification->sendAadhaarVerificationOTP($user->id, $request->aadhar);
+    
+        if (!$sendOtp['status']) {
+            return response()->json([
+                'status' => false,
+                'message' => $sendOtp['error']['error'] ?? 'Failed to send OTP'
+            ], 200);
+        }
+    
+        return response()->json([
+            'status' => true,
+            'message' => $sendOtp['success']['message']
+        ]);
+
+    }
+    public function aadharverifyOtp(Request $request){
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Unauthorized'
+            ], 200);
+        }
+
+        try {
+            $request->validate([
+                'aadhar' => ['required', 'digits:12', 'regex:/^[2-9]{1}[0-9]{11}$/'],
+                'otp' => ['required', 'digits:6']
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 200);
+        }
+    
+        $verifyOtp = $this->Verification->verifyAadhaarOTP($user->id, $request->aadhar, $request->otp);
+
+        if (!$verifyOtp['status']) {
+            return response()->json([
+                'status' => false,
+                'message' => $verifyOtp['message'] ?? 'Failed to send OTP'
+            ], 400);
+        }
+    
+        return response()->json([
+            'status' => true,
+            'message' => $verifyOtp['message']
+        ]);
+
+    }
+
 
 }

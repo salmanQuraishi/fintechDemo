@@ -175,15 +175,12 @@ class SandboxApiService
 
         } else {
 
-            // Handle failure response
-            $errorResp = $response->body(); // Return the error message
+            $errorResp = $response->body();
             try{
-                $errors['error'] = $errorResp->message;
+                $errors['error'] = $errorResp['message'];
             }catch(Exception $e){
                 $errors['error'] = json_decode($errorResp)->message;
             }
-
-            
 
             return ['status' => false, 'errors' => $errors];
         }
@@ -253,7 +250,7 @@ class SandboxApiService
                 return ['status' => false, 'error'=>$errors];
             }
 
-            if($successResp['data']['message']=='Aadhaar not linked to mobile number'){
+            if($successResp['data']['message']=='Aadhaar not linked to mobile number'){
                 $errors['error']=$successResp['data']['message'];
                 return ['status' => false, 'error'=>$errors];
             }

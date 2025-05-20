@@ -94,7 +94,6 @@ class UserService
 
      public function verifyEmailOtp(string $email, string $otp){
 
-
         $emailOtp = TblOtp::where('email','=',$email)->where('otp','=',$otp)->where('type','=','email-verify')->where('status','=','pending')->first();
 
         if($emailOtp){

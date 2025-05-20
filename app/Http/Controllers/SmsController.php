@@ -15,10 +15,6 @@ class SmsController extends Controller
     {
         $request->validate([
             'aadhar' => ['required', 'digits:12', 'regex:/^[2-9]{1}[0-9]{11}$/']
-        ], [
-            'aadhar.required' => 'Aadhaar number is required.',
-            'aadhar.digits' => 'Aadhaar number must be exactly 12 digits.',
-            'aadhar.regex' => 'Invalid Aadhaar number format.'
         ]);
     
         $sendOtp = $this->Verification->sendAadhaarVerificationOTP(auth()->user()->id, $request->aadhar);

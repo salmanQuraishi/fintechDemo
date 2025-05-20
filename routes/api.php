@@ -43,6 +43,14 @@ Route::prefix('v1')->group(function () {
         Route::get('/business/details', [APICommonController::class, 'businessDetails']);
         Route::post('/business/details/request', [APICommonController::class, 'businessDetailsRequest']);
 
+        Route::get('/admin/banks', [APICommonController::class, 'adminBanks']);
+        
+        Route::get('/email/verification/send/otp', [APICommonController::class, 'sendEmail']);
+        Route::post('/email/verify/otp', [APICommonController::class, 'verifyEmailotp']);
+
+        Route::post('/aadhar/verification/otp', [APICommonController::class, 'aadharsendOtp']);
+        Route::post('/aadhar/verify/otp', [APICommonController::class, 'aadharverifyOtp']);
+
     });
 });
 
